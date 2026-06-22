@@ -1,0 +1,423 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  WRITER
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ContactMethodType {
+  EMAIL
+  PHONE
+  WHATSAPP
+  TELEGRAM
+}
+
+enum ProjectStatus {
+  COMPLETED
+  IN_PROGRESS
+  PLANNED
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(WRITER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts      Post[]
+  categories Categories[]
+  tags       Tags[]
+  projects   Project[]
+  media      Media[]
+}
+
+model Media {
+  id        String   @id @default(uuid())
+  userId    String?
+  filename  String
+  url       String
+  alt       String?
+  mimeType  String
+  size      Int
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Categories {
+  id     String @id @default(uuid())
+  userId String
+
+  faName    String
+  enName    String
+  faSlug    String @unique
+  enSlug    String @unique
+  faExcerpt String
+  enExcerpt String
+  faContent String @db.Text
+  enContent String @db.Text
+
+  thumbnail String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id])
+  posts Post[]
+}
+
+model Tags {
+  id     String @id @default(uuid())
+  userId String
+
+  faName    String
+  enName    String
+  faSlug    String @unique
+  enSlug    String @unique
+  faExcerpt String
+  enExcerpt String
+  faContent String @db.Text
+  enContent String @db.Text
+
+  thumbnail String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User      @relation(fields: [userId], references: [id])
+  posts PostTag[]
+}
+
+model Post {
+  id         String @id @default(uuid())
+  userId     String
+  categoryId String
+
+  faTitle   String
+  enTitle   String
+  faSlug    String @unique
+  enSlug    String @unique
+  faExcerpt String
+  enExcerpt String
+  faContent String @db.Text
+  enContent String @db.Text
+  status    PostStatus @default(DRAFT)
+  thumbnail String
+  readTime  Int?
+
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user     User       @relation(fields: [userId], references: [id])
+  category Categories @relation(fields: [categoryId], references: [id])
+  tags     PostTag[]
+}
+
+model PostTag {
+  id     String @id @default(uuid())
+  postId String
+  tagId  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tags @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tagId])
+}
+
+model SiteSettings {
+  id String @id @default("default")
+
+  faLogo              String @default("Atrina Dev")
+  enLogo              String @default("Atrina Dev")
+  faFooterDescription String @db.Text
+  enFooterDescription String @db.Text
+  faFooterCopyright   String
+  enFooterCopyright   String
+  careersEmail        String @default("careers@atrina.com")
+
+  updatedAt DateTime @updatedAt
+}
+
+model NavLink {
+  id           String  @id @default(uuid())
+  faName       String
+  enName       String
+  path         String
+  order        Int     @default(0)
+  showInHeader Boolean @default(true)
+  showInFooter Boolean @default(true)
+}
+
+model HomeHero {
+  id String @id @default("default")
+
+  faBadge         String
+  enBadge         String
+  faTitleTop      String
+  enTitleTop      String
+  faTitleBottom   String
+  enTitleBottom   String
+  faDescription   String @db.Text
+  enDescription   String @db.Text
+  faLinkOneText   String
+  enLinkOneText   String
+  faLinkTwoText   String
+  enLinkTwoText   String
+  linkOneHref     String @default("/projects")
+  linkTwoHref     String @default("/about")
+}
+
+model HomeFeaturesSection {
+  id String @id @default("default")
+
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
+}
+
+model HomeFeature {
+  id String @id @default(uuid())
+
+  icon          String
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
+  order         Int    @default(0)
+}
+
+model HomeSkillsSection {
+  id String @id @default("default")
+
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
+}
+
+model HomeSkillBar {
+  id String @id @default(uuid())
+
+  faName  String
+  enName  String
+  level   Int
+  order   Int @default(0)
+}
+
+model HomeSkillItem {
+  id String @id @default(uuid())
+
+  faText String
+  enText String
+  order  Int    @default(0)
+}
+
+model HomeCta {
+  id String @id @default("default")
+
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
+  faLinkText    String
+  enLinkText    String
+  linkHref      String @default("/contact")
+}
+
+model PageMeta {
+  id String @id
+
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
+}
+
+model AboutStory {
+  id String @id @default("default")
+
+  faTitle      String
+  enTitle      String
+  faParagraph1 String @db.Text
+  enParagraph1 String @db.Text
+  faParagraph2 String @db.Text
+  enParagraph2 String @db.Text
+  faParagraph3 String @db.Text
+  enParagraph3 String @db.Text
+}
+
+model AboutStat {
+  id String @id @default(uuid())
+
+  value   String
+  faLabel String
+  enLabel String
+  order   Int    @default(0)
+}
+
+model AboutValue {
+  id String @id @default(uuid())
+
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
+  order         Int    @default(0)
+}
+
+model AboutTeamSection {
+  id String @id @default("default")
+
+  faTitle    String
+  enTitle    String
+  faSubtitle String @db.Text
+  enSubtitle String @db.Text
+}
+
+model AboutCta {
+  id String @id @default("default")
+
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
+  faEmailLabel  String
+  enEmailLabel  String
+}
+
+model TeamMember {
+  id String @id @default(uuid())
+
+  name     String
+  faRole   String
+  enRole   String
+  faBio    String? @db.Text
+  enBio    String? @db.Text
+  image    String?
+  linkedin String?
+  twitter  String?
+  github   String?
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+}
+
+model ContactMethod {
+  id String @id @default(uuid())
+
+  type      ContactMethodType
+  faLabel   String
+  enLabel   String
+  value     String
+  link      String
+  colorFrom String @default("from-blue-500")
+  colorTo   String @default("to-cyan-500")
+  order     Int    @default(0)
+}
+
+model ContactSubmission {
+  id String @id @default(uuid())
+
+  name    String
+  email   String
+  subject String?
+  message String  @db.Text
+  isRead  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model ProjectCategory {
+  id String @id @default(uuid())
+
+  key    String @unique
+  faName String
+  enName String
+  order  Int    @default(0)
+
+  projects Project[]
+}
+
+model Project {
+  id         String  @id @default(uuid())
+  userId     String?
+  categoryId String
+
+  faName        String
+  enName        String
+  faSlug        String @unique
+  enSlug        String @unique
+  faDescription String @db.Text
+  enDescription String @db.Text
+  client        String?
+  technologies  String[]
+  thumbnail     String?
+  completionDate DateTime?
+  status        ProjectStatus @default(COMPLETED)
+  isPublished   Boolean       @default(true)
+  order         Int           @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User?           @relation(fields: [userId], references: [id])
+  category ProjectCategory @relation(fields: [categoryId], references: [id])
+}
+
+model WorkCategory {
+  id String @id @default(uuid())
+
+  key    String @unique
+  faName String
+  enName String
+  order  Int    @default(0)
+
+  works Work[]
+}
+
+model Work {
+  id         String @id @default(uuid())
+  categoryId String
+
+  faTitle       String
+  enTitle       String
+  faSlug        String @unique
+  enSlug        String @unique
+  faDescription String @db.Text
+  enDescription String @db.Text
+  faChallenge   String? @db.Text
+  enChallenge   String? @db.Text
+  faSolution    String? @db.Text
+  enSolution    String? @db.Text
+  faResults     String? @db.Text
+  enResults     String? @db.Text
+  thumbnail     String?
+  galleryImages String[]
+  technologies  String[]
+  isPublished   Boolean  @default(true)
+  order         Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  category WorkCategory @relation(fields: [categoryId], references: [id])
+}

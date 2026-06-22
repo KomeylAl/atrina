@@ -1,0 +1,188 @@
+{
+  "header": {
+    "navLinks": [
+      { "name": "Home", "path": "/en/" },
+      { "name": "Projects", "path": "/en/projects" },
+      { "name": "Work", "path": "/en/work" },
+      { "name": "Blog", "path": "/en/blog" },
+      { "name": "About", "path": "/en/about" },
+      { "name": "Contact", "path": "/en/contact" }
+    ],
+    "logo": "Atrina Dev"
+  },
+  "mainContent": {
+    "hreo": {
+      "heroBadge": "Crafting Digital Excellence",
+      "hreoMainTextTop": "Transform Your Vision Into",
+      "heroMainTextBottom": "Reality",
+      "heroDescription": "We create exceptional software that drives growth, enhances efficiency, and delivers remarkable user experiences.",
+      "heroLinkOne": "View Our Work",
+      "heroLinkTow": "Meet Our Team"
+    },
+    "features": {
+      "featuresTitle": "Why Choose Atrina",
+      "featuresDescription": "We combine technical excellence with creative innovation to deliver outstanding results",
+      "featuresData": [
+        {
+          "icon": "Code",
+          "title": "Custom Development",
+          "description": "Tailored software solutions built with cutting-edge technologies to meet your unique business needs."
+        },
+        {
+          "icon": "Zap",
+          "title": "Lightning Fast",
+          "description": "Optimized performance and blazing-fast load times ensure exceptional user experiences."
+        },
+        {
+          "icon": "Shield",
+          "title": "Secure & Reliable",
+          "description": "Enterprise-grade security and 99.9% uptime guarantee for peace of mind."
+        },
+        {
+          "icon": "Users",
+          "title": "Expert Team",
+          "description": "Work with experienced developers, designers, and strategists who care about your success."
+        }
+      ]
+    },
+    "skills": {
+      "skillsTitle": "Our Expertise",
+      "skillsDescription": "We master the latest technologies and methodologies to deliver world-class solutions.",
+      "skillsBarChart": [
+        { "name": "Web Development", "level": 95 },
+        { "name": "Mobile Apps", "level": 90 },
+        { "name": "Cloud Solutions", "level": 88 },
+        { "name": "AI & Machine Learning", "level": 85 },
+        { "name": "UI/UX Design", "level": 92 },
+        { "name": "DevOps", "level": 87 }
+      ],
+      "skillsItems": [
+        "Agile development methodology",
+        "Continuous integration and deployment",
+        "Comprehensive testing and QA",
+        "Scalable architecture design",
+        "Regular updates and maintenance",
+        "24/7 technical support"
+      ]
+    },
+    "CTA": {
+      "CTATitle": "Ready to Start Your Project?",
+      "CTADescription": "Let's discuss how we can help bring your ideas to life",
+      "CTALink": "Get In Touch"
+    }
+  },
+  "projects": {
+    "pageTitle": "Our Projects",
+    "pageDescription": "Explore our portfolio of successful projects delivered for clients worldwide",
+    "allProjects": "All Projects",
+    "noProjectsFound": "No projects found in this category yet.",
+    "categories": {
+      "all": "All Projects",
+      "web": "Web",
+      "mobile": "Mobile",
+      "ai_ml": "AI/ML",
+      "cloud": "Cloud",
+      "blockchain": "Blockchain"
+    }
+  },
+  "work": {
+    "pageTitle": "Case Studies",
+    "pageDescription": "Deep dives into our most impactful work and the results we've achieved for our clients",
+    "allWork": "All Work",
+    "noWorkFound": "No case studies found in this category yet.",
+    "challenge": "The Challenge",
+    "solution": "Our Solution",
+    "results": "Results",
+    "categories": {
+      "all": "All Work",
+      "ui_ux": "UI/UX",
+      "development": "Development",
+      "consulting": "Consulting",
+      "devops": "DevOps",
+      "data_science": "Data Science"
+    }
+  },
+  "blog": {
+    "pageTitle": "Engineering Blog",
+    "pageDescription": "Insights, tutorials, and thoughts on software development and technology",
+    "searchPlaceholder": "Search articles...",
+    "allPosts": "All Posts",
+    "noBlogsFound": "No blog posts found. Try adjusting your filters.",
+    "categories": {
+      "all": "All Posts",
+      "web_development": "Web Dev",
+      "mobile_development": "Mobile",
+      "ai_ml": "AI/ML",
+      "devops": "DevOps",
+      "cloud": "Cloud",
+      "best_practices": "Best Practices"
+    }
+  },
+  "contact": {
+    "pageTitle": "Get In Touch",
+    "pageDescription": "We'd love to hear about your project. Contact us today to discuss how we can help transform your vision.",
+    "email": "Email",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegram"
+  },
+  "about": {
+    "pageTitle": "About Atrina",
+    "pageDescription": "We're a passionate team of developers, designers, and innovators dedicated to building exceptional software solutions.",
+    "story": {
+      "title": "Our Story",
+      "paragraph1": "Founded in 2019, Atrina was born from a simple belief: that exceptional software should be accessible to everyone. What started as a small team of passionate developers has grown into a full-service software company serving clients worldwide.",
+      "paragraph2": "Our journey has been driven by our commitment to excellence and innovation. We've had the privilege of working with startups, scale-ups, and established enterprises, helping them transform their ideas into reality through cutting-edge technology solutions.",
+      "paragraph3": "Today, we're proud to be a trusted partner for businesses looking to leverage technology for growth. Our team combines deep technical expertise with creative problem-solving to deliver solutions that not only meet requirements but exceed expectations."
+    },
+    "stats": [
+      { "value": "50+", "label": "Projects Delivered" },
+      { "value": "30+", "label": "Happy Clients" },
+      { "value": "15+", "label": "Team Members" },
+      { "value": "5+", "label": "Years Experience" }
+    ],
+    "values": [
+      {
+        "title": "Excellence",
+        "description": "We strive for perfection in every line of code and every pixel of design."
+      },
+      {
+        "title": "Innovation",
+        "description": "We embrace new technologies and creative solutions to solve complex problems."
+      },
+      {
+        "title": "Collaboration",
+        "description": "We believe the best results come from working together with our clients."
+      },
+      {
+        "title": "Integrity",
+        "description": "We maintain the highest standards of honesty and ethical behavior."
+      }
+    ],
+    "team": {
+      "title": "Meet Our Team",
+      "subtitle": "The talented individuals who make Atrina special",
+      "noTeamFound": "Team members will be added soon."
+    },
+    "cta": {
+      "title": "Want to Join Our Team?",
+      "description": "We're always looking for talented individuals to join our growing team",
+      "email": "careers@atrina.com"
+    }
+  },
+  "footer": {
+    "footerDescription": "Building exceptional software solutions that transform businesses and delight users.",
+    "footerLinksTitle": "Quick Links",
+    "footerContactTitle": "Contact",
+    "footerCopyRight": "© 2024 Atrina. All rights reserved.",
+    "navLinks": [
+      { "name": "Home", "path": "/en/" },
+      { "name": "Projects", "path": "/en/projects" },
+      { "name": "Work", "path": "/en/work" },
+      { "name": "Blog", "path": "/en/blog" },
+      { "name": "About", "path": "/en/about" },
+      { "name": "Contact", "path": "/en/contact" }
+    ],
+    "logo": "Atrina Dev"
+  }
+}
