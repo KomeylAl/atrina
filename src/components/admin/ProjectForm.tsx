@@ -31,7 +31,7 @@ export default function ProjectForm({ projectId }: ProjectFormProps) {
     faDescription: "", enDescription: "",
     client: "", technologies: [] as string[],
     thumbnail: "", categoryId: "", status: "COMPLETED",
-    isPublished: true, order: 0,
+    isPublished: true, isFeatured: false, order: 0,
     completionDate: "",
   });
 
@@ -44,7 +44,7 @@ export default function ProjectForm({ projectId }: ProjectFormProps) {
           faDescription: p.faDescription, enDescription: p.enDescription,
           client: p.client ?? "", technologies: p.technologies ?? [],
           thumbnail: p.thumbnail ?? "", categoryId: p.categoryId,
-          status: p.status, isPublished: p.isPublished, order: p.order,
+          status: p.status, isPublished: p.isPublished, isFeatured: p.isFeatured ?? false, order: p.order,
           completionDate: p.completionDate ? p.completionDate.split("T")[0] : "",
         });
         setLoading(false);
@@ -131,6 +131,10 @@ export default function ProjectForm({ projectId }: ProjectFormProps) {
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={form.isPublished} onChange={(e) => update("isPublished", e.target.checked)} />
               منتشر شده
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={form.isFeatured} onChange={(e) => update("isFeatured", e.target.checked)} />
+              نمایش در صفحه اصلی
             </label>
             <TagsInput value={form.technologies} onChange={(v) => update("technologies", v)} label="تکنولوژی‌ها" />
             <ImagePicker value={form.thumbnail} onChange={(v) => update("thumbnail", v)} />

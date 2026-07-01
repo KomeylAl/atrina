@@ -1,8 +1,13 @@
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { jsonOk, jsonError } from "@/lib/api-response";
+import {
+  UPLOAD_DIR,
+  getUploadFilePath,
+  getUploadPublicUrl,
+} from "@/lib/uploads";
 
 export async function GET() {
   const { error } = await requireAdmin();
@@ -30,15 +35,13 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
+    await mkdir(UPLOAD_DIR, { recursive: true });
 
     const ext = path.extname(file.name) || ".jpg";
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
-    const filepath = path.join(uploadsDir, filename);
-    await writeFile(filepath, buffer);
+    await writeFile(getUploadFilePath(filename), buffer);
 
-    const url = `/uploads/${filename}`;
+    const url = getUploadPublicUrl(filename);
     const media = await prisma.media.create({
       data: {
         filename: file.name,

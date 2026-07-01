@@ -17,32 +17,63 @@ import {
   ChevronRight,
   Tags,
   Layers,
+  UserCircle,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  canAccess,
+  getRoleLabel,
+  type AdminPermission,
+} from "@/lib/auth/permissions";
+import type { Role } from "@prisma/client";
 
-const navItems = [
-  { href: "/admin", label: "داشبورد", icon: LayoutDashboard, exact: true },
-  { href: "/admin/home", label: "صفحه اصلی", icon: Home },
-  { href: "/admin/blog", label: "بلاگ", icon: Newspaper },
-  { href: "/admin/blog/categories", label: "دسته‌بندی بلاگ", icon: Layers },
-  { href: "/admin/blog/tags", label: "برچسب‌ها", icon: Tags },
-  { href: "/admin/projects", label: "پروژه‌ها", icon: FolderKanban },
-  { href: "/admin/work", label: "نمونه‌کارها", icon: Briefcase },
-  { href: "/admin/about", label: "درباره ما", icon: Users },
-  { href: "/admin/contact", label: "تماس", icon: Mail },
-  { href: "/admin/media", label: "گالری رسانه", icon: ImageIcon },
-  { href: "/admin/settings", label: "تنظیمات", icon: Settings },
+const navItems: {
+  href: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+  permission: AdminPermission;
+}[] = [
+  { href: "/admin", label: "داشبورد", icon: LayoutDashboard, exact: true, permission: "dashboard" },
+  { href: "/admin/home", label: "صفحه اصلی", icon: Home, permission: "home" },
+  { href: "/admin/blog", label: "بلاگ", icon: Newspaper, permission: "blog" },
+  { href: "/admin/blog/categories", label: "دسته‌بندی بلاگ", icon: Layers, permission: "blog" },
+  { href: "/admin/blog/tags", label: "برچسب‌ها", icon: Tags, permission: "blog" },
+  { href: "/admin/projects", label: "پروژه‌ها", icon: FolderKanban, permission: "projects" },
+  { href: "/admin/work", label: "نمونه‌کارها", icon: Briefcase, permission: "work" },
+  { href: "/admin/about", label: "درباره ما", icon: Users, permission: "about" },
+  { href: "/admin/contact", label: "تماس", icon: Mail, permission: "contact" },
+  { href: "/admin/media", label: "گالری رسانه", icon: ImageIcon, permission: "media" },
+  { href: "/admin/settings", label: "تنظیمات", icon: Settings, permission: "settings" },
+  { href: "/admin/users", label: "کاربران", icon: Shield, permission: "users" },
+  { href: "/admin/profile", label: "پروفایل من", icon: UserCircle, permission: "dashboard" },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [role, setRole] = useState<Role | null>(null);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    fetch("/api/admin/auth/me")
+      .then((r) => r.json())
+      .then((user) => {
+        setRole(user.role);
+        setUserName(user.displayName || user.name);
+      });
+  }, []);
 
   async function handleLogout() {
     await fetch("/api/admin/auth/logout", { method: "POST" });
     window.location.href = "/admin/login";
   }
+
+  const visibleItems = navItems.filter(
+    (item) => role && canAccess(role, item.permission),
+  );
 
   return (
     <aside
@@ -71,8 +102,15 @@ export default function AdminSidebar() {
         </button>
       </div>
 
+      {!collapsed && userName && role && (
+        <div className="border-b border-slate-800 px-4 py-3">
+          <p className="text-sm font-medium truncate">{userName}</p>
+          <p className="text-xs text-slate-500">{getRoleLabel(role)}</p>
+        </div>
+      )}
+
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const active = item.exact
             ? pathname === item.href
             : pathname === item.href ||

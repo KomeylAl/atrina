@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { localizedField, pickLocalized, type Locale } from "@/lib/locale";
 import type { PageMetaItem, WorkListItem } from "@/types/database";
+import { resolveMediaUrl } from "@/lib/uploads";
 
 export async function getWorkPageMeta(locale: Locale): Promise<PageMetaItem> {
   const meta = await prisma.pageMeta.findUnique({ where: { id: "work" } });
@@ -50,7 +51,7 @@ export async function getWorks(
     slug: pickLocalized(locale, w.faSlug, w.enSlug),
     title: pickLocalized(locale, w.faTitle, w.enTitle),
     description: pickLocalized(locale, w.faDescription, w.enDescription),
-    thumbnail: w.thumbnail,
+    thumbnail: resolveMediaUrl(w.thumbnail),
     category: pickLocalized(locale, w.category.faName, w.category.enName),
     categoryKey: w.category.key,
     challenge: pickLocalized(locale, w.faChallenge ?? "", w.enChallenge ?? "") || null,
@@ -83,6 +84,6 @@ export async function getWorkBySlug(locale: Locale, slug: string) {
     solution: pickLocalized(locale, work.faSolution ?? "", work.enSolution ?? "") || null,
     results: pickLocalized(locale, work.faResults ?? "", work.enResults ?? "") || null,
     technologies: work.technologies,
-    galleryImages: work.galleryImages,
+    galleryImages: work.galleryImages.map(resolveMediaUrl),
   };
 }

@@ -32,11 +32,12 @@ enum ProjectStatus {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
-  role     Role   @default(WRITER)
+  id          String  @id @default(uuid())
+  name        String
+  displayName String?
+  email       String  @unique
+  password    String
+  role        Role    @default(WRITER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -184,6 +185,46 @@ model HomeHero {
   enLinkTwoText   String
   linkOneHref     String @default("/projects")
   linkTwoHref     String @default("/about")
+}
+
+model HomeHeroSlide {
+  id String @id @default(uuid())
+
+  faBadge         String
+  enBadge         String
+  faTitleTop      String
+  enTitleTop      String
+  faTitleBottom   String
+  enTitleBottom   String
+  faDescription   String @db.Text
+  enDescription   String @db.Text
+  faLinkOneText   String
+  enLinkOneText   String
+  faLinkTwoText   String
+  enLinkTwoText   String
+  linkOneHref     String @default("/projects")
+  linkTwoHref     String @default("/about")
+  image           String?
+  order           Int     @default(0)
+  isActive        Boolean @default(true)
+}
+
+model HomePostsSection {
+  id String @id @default("default")
+
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
+}
+
+model HomeProjectsSection {
+  id String @id @default("default")
+
+  faTitle       String
+  enTitle       String
+  faDescription String @db.Text
+  enDescription String @db.Text
 }
 
 model HomeFeaturesSection {
@@ -374,6 +415,7 @@ model Project {
   completionDate DateTime?
   status        ProjectStatus @default(COMPLETED)
   isPublished   Boolean       @default(true)
+  isFeatured    Boolean       @default(false)
   order         Int           @default(0)
 
   createdAt DateTime @default(now())

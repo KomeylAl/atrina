@@ -30,6 +30,7 @@ async function main() {
   await prisma.homeFeature.deleteMany();
   await prisma.homeSkillBar.deleteMany();
   await prisma.homeSkillItem.deleteMany();
+  await prisma.homeHeroSlide.deleteMany();
   await prisma.navLink.deleteMany();
   await prisma.media.deleteMany();
   await prisma.user.deleteMany();
@@ -37,6 +38,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       name: "Admin",
+      displayName: "تیم آترینا",
       email: "admin@atrina.com",
       password: await hashPassword("changeme"),
       role: "ADMIN",
@@ -91,6 +93,47 @@ async function main() {
       enLinkOneText: en.mainContent.hreo.heroLinkOne,
       faLinkTwoText: fa.mainContent.hreo.heroLinkTow,
       enLinkTwoText: en.mainContent.hreo.heroLinkTow,
+    },
+  });
+
+  await prisma.homeHeroSlide.create({
+    data: {
+      faBadge: fa.mainContent.hreo.heroBadge,
+      enBadge: en.mainContent.hreo.heroBadge,
+      faTitleTop: fa.mainContent.hreo.hreoMainTextTop,
+      enTitleTop: en.mainContent.hreo.hreoMainTextTop,
+      faTitleBottom: fa.mainContent.hreo.heroMainTextBottom,
+      enTitleBottom: en.mainContent.hreo.heroMainTextBottom,
+      faDescription: fa.mainContent.hreo.heroDescription,
+      enDescription: en.mainContent.hreo.heroDescription,
+      faLinkOneText: fa.mainContent.hreo.heroLinkOne,
+      enLinkOneText: en.mainContent.hreo.heroLinkOne,
+      faLinkTwoText: fa.mainContent.hreo.heroLinkTow,
+      enLinkTwoText: en.mainContent.hreo.heroLinkTow,
+      order: 0,
+      isActive: true,
+    },
+  });
+
+  await prisma.homePostsSection.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
+      faTitle: "آخرین مقالات",
+      enTitle: "Latest Articles",
+      faDescription: "تازه‌ترین مطالب و بینش‌های فنی تیم ما",
+      enDescription: "Fresh insights and technical articles from our team",
+    },
+  });
+
+  await prisma.homeProjectsSection.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
+      faTitle: "پروژه‌های برجسته",
+      enTitle: "Featured Projects",
+      faDescription: "نمونه‌کارهای منتخب از پورتفولیوی ما",
+      enDescription: "Selected highlights from our portfolio",
     },
   });
 
@@ -391,6 +434,7 @@ async function main() {
         userId: admin.id,
         order: index,
         status: ProjectStatus.COMPLETED,
+        isFeatured: index < 2,
       },
     });
   }
@@ -611,6 +655,17 @@ async function main() {
         },
       });
     }
+  }
+
+  // Migrate legacy /uploads/ URLs to /api/uploads/
+  const legacyMedia = await prisma.media.findMany({
+    where: { url: { startsWith: "/uploads/" } },
+  });
+  for (const item of legacyMedia) {
+    await prisma.media.update({
+      where: { id: item.id },
+      data: { url: item.url.replace("/uploads/", "/api/uploads/") },
+    });
   }
 
   console.log("✅ Database seeded successfully!");

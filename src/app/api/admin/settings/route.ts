@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/admin/require-admin";
 import { jsonOk, jsonError } from "@/lib/api-response";
 
 export async function GET() {
-  const { error } = await requireAdmin();
+  const { error } = await requireAdmin({ permission: "settings" });
   if (error) return error;
 
   const [settings, navLinks, pageMeta] = await Promise.all([
@@ -16,7 +16,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const { error } = await requireAdmin();
+  const { error } = await requireAdmin({ permission: "settings" });
   if (error) return error;
 
   try {

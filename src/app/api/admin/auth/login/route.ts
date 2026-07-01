@@ -25,12 +25,14 @@ export async function POST(request: Request) {
       userId: user.id,
       email: user.email,
       name: user.name,
+      displayName: user.displayName,
       role: user.role,
     });
 
     return jsonOk({
       id: user.id,
       name: user.name,
+      displayName: user.displayName,
       email: user.email,
       role: user.role,
     });

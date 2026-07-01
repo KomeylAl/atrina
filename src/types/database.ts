@@ -6,7 +6,9 @@ export interface LocalizedNavLink {
 }
 
 export interface HomePageData {
-  hero: {
+  heroSlides: Array<{
+    id: string;
+    image: string | null;
     badge: string;
     titleTop: string;
     titleBottom: string;
@@ -15,7 +17,7 @@ export interface HomePageData {
     linkTwoText: string;
     linkOneHref: string;
     linkTwoHref: string;
-  };
+  }>;
   features: {
     title: string;
     description: string;
@@ -37,6 +39,31 @@ export interface HomePageData {
     description: string;
     linkText: string;
     linkHref: string;
+  };
+  latestPosts: {
+    title: string;
+    description: string;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      excerpt: string;
+      thumbnail: string;
+      category: string;
+      publishedAt: string | null;
+    }>;
+  };
+  featuredProjects: {
+    title: string;
+    description: string;
+    items: Array<{
+      id: string;
+      slug: string;
+      name: string;
+      description: string;
+      thumbnail: string;
+      category: string;
+    }>;
   };
 }
 

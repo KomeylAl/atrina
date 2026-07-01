@@ -6,18 +6,39 @@ export async function GET() {
   const { error } = await requireAdmin();
   if (error) return error;
 
-  const [hero, featuresSection, features, skillsSection, skillBars, skillItems, cta] =
-    await Promise.all([
-      prisma.homeHero.findUnique({ where: { id: "default" } }),
-      prisma.homeFeaturesSection.findUnique({ where: { id: "default" } }),
-      prisma.homeFeature.findMany({ orderBy: { order: "asc" } }),
-      prisma.homeSkillsSection.findUnique({ where: { id: "default" } }),
-      prisma.homeSkillBar.findMany({ orderBy: { order: "asc" } }),
-      prisma.homeSkillItem.findMany({ orderBy: { order: "asc" } }),
-      prisma.homeCta.findUnique({ where: { id: "default" } }),
-    ]);
+  const [
+    heroSlides,
+    featuresSection,
+    features,
+    skillsSection,
+    skillBars,
+    skillItems,
+    cta,
+    postsSection,
+    projectsSection,
+  ] = await Promise.all([
+    prisma.homeHeroSlide.findMany({ orderBy: { order: "asc" } }),
+    prisma.homeFeaturesSection.findUnique({ where: { id: "default" } }),
+    prisma.homeFeature.findMany({ orderBy: { order: "asc" } }),
+    prisma.homeSkillsSection.findUnique({ where: { id: "default" } }),
+    prisma.homeSkillBar.findMany({ orderBy: { order: "asc" } }),
+    prisma.homeSkillItem.findMany({ orderBy: { order: "asc" } }),
+    prisma.homeCta.findUnique({ where: { id: "default" } }),
+    prisma.homePostsSection.findUnique({ where: { id: "default" } }),
+    prisma.homeProjectsSection.findUnique({ where: { id: "default" } }),
+  ]);
 
-  return jsonOk({ hero, featuresSection, features, skillsSection, skillBars, skillItems, cta });
+  return jsonOk({
+    heroSlides,
+    featuresSection,
+    features,
+    skillsSection,
+    skillBars,
+    skillItems,
+    cta,
+    postsSection,
+    projectsSection,
+  });
 }
 
 export async function PUT(request: Request) {
@@ -25,16 +46,15 @@ export async function PUT(request: Request) {
   if (error) return error;
 
   try {
-    const body = await request.json();
-    const { section, data } = body;
+    const { section, data } = await request.json();
 
     switch (section) {
-      case "hero":
-        await prisma.homeHero.upsert({
-          where: { id: "default" },
-          update: data,
-          create: { id: "default", ...data },
-        });
+      case "heroSlide":
+        if (data.id) {
+          await prisma.homeHeroSlide.update({ where: { id: data.id }, data });
+        } else {
+          await prisma.homeHeroSlide.create({ data });
+        }
         break;
       case "featuresSection":
         await prisma.homeFeaturesSection.upsert({
@@ -45,6 +65,20 @@ export async function PUT(request: Request) {
         break;
       case "skillsSection":
         await prisma.homeSkillsSection.upsert({
+          where: { id: "default" },
+          update: data,
+          create: { id: "default", ...data },
+        });
+        break;
+      case "postsSection":
+        await prisma.homePostsSection.upsert({
+          where: { id: "default" },
+          update: data,
+          create: { id: "default", ...data },
+        });
+        break;
+      case "projectsSection":
+        await prisma.homeProjectsSection.upsert({
           where: { id: "default" },
           update: data,
           create: { id: "default", ...data },
@@ -97,6 +131,9 @@ export async function DELETE(request: Request) {
   if (!id) return jsonError("ID required");
 
   switch (section) {
+    case "heroSlide":
+      await prisma.homeHeroSlide.delete({ where: { id } });
+      break;
     case "feature":
       await prisma.homeFeature.delete({ where: { id } });
       break;

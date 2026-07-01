@@ -2,10 +2,10 @@
 
 import { Calendar, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { ProjectListItem } from "@/types/database";
+import { formatMonthYear, type AppLocale } from "@/lib/format-locale";
 
 const categoryColors: Record<string, string> = {
   web: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
@@ -18,7 +18,7 @@ const categoryColors: Record<string, string> = {
 
 interface ProjectListProps {
   projects: ProjectListItem[];
-  locale: string;
+  locale: AppLocale;
 }
 
 export default function ProjectList({ projects, locale }: ProjectListProps) {
@@ -95,8 +95,8 @@ export default function ProjectList({ projects, locale }: ProjectListProps) {
 
               {project.completionDate && (
                 <div className="flex items-center text-sm text-slate-500 dark:text-slate-500">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {format(new Date(project.completionDate), "MMMM yyyy")}
+                  <Calendar className="h-4 w-4 me-2" />
+                  {formatMonthYear(project.completionDate, locale)}
                 </div>
               )}
             </div>

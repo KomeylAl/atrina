@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { localizedField, pickLocalized, type Locale } from "@/lib/locale";
 import type { PageMetaItem, ProjectListItem } from "@/types/database";
+import { resolveMediaUrl } from "@/lib/uploads";
 
 export async function getProjectsPageMeta(locale: Locale): Promise<PageMetaItem> {
   const meta = await prisma.pageMeta.findUnique({ where: { id: "projects" } });
@@ -50,7 +51,7 @@ export async function getProjects(
     slug: pickLocalized(locale, p.faSlug, p.enSlug),
     name: pickLocalized(locale, p.faName, p.enName),
     description: pickLocalized(locale, p.faDescription, p.enDescription),
-    thumbnail: p.thumbnail,
+    thumbnail: resolveMediaUrl(p.thumbnail),
     category: pickLocalized(locale, p.category.faName, p.category.enName),
     categoryKey: p.category.key,
     client: p.client,
@@ -75,7 +76,7 @@ export async function getProjectBySlug(locale: Locale, slug: string) {
     slug: pickLocalized(locale, project.faSlug, project.enSlug),
     name: pickLocalized(locale, project.faName, project.enName),
     description: pickLocalized(locale, project.faDescription, project.enDescription),
-    thumbnail: project.thumbnail,
+    thumbnail: resolveMediaUrl(project.thumbnail),
     category: pickLocalized(locale, project.category.faName, project.category.enName),
     categoryKey: project.category.key,
     client: project.client,

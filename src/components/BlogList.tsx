@@ -1,11 +1,15 @@
 "use client";
 
-import { format } from "date-fns";
 import { Calendar, User, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { BlogPostListItem } from "@/types/database";
+import {
+  formatDate,
+  formatReadTime,
+  type AppLocale,
+} from "@/lib/format-locale";
 
 const categoryColors: Record<string, string> = {
   web_development: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
@@ -19,7 +23,7 @@ const categoryColors: Record<string, string> = {
 
 interface BlogListProps {
   posts: BlogPostListItem[];
-  locale: string;
+  locale: AppLocale;
 }
 
 export default function BlogList({ posts, locale }: BlogListProps) {
@@ -74,22 +78,22 @@ export default function BlogList({ posts, locale }: BlogListProps) {
               <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-500 mb-4">
                 {post.author && (
                   <div className="flex items-center">
-                    <User className="h-4 w-4 mr-1" />
+                    <User className="h-4 w-4 me-1" />
                     <span>{post.author}</span>
                   </div>
                 )}
                 {post.readTime && (
                   <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
-                    <span>{post.readTime} min read</span>
+                    <Clock className="h-4 w-4 me-1" />
+                    <span>{formatReadTime(post.readTime, locale)}</span>
                   </div>
                 )}
               </div>
 
               {post.publishedAt && (
                 <div className="flex items-center text-sm text-slate-500 dark:text-slate-500 mb-4">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {format(new Date(post.publishedAt), "MMMM d, yyyy")}
+                  <Calendar className="h-4 w-4 me-2" />
+                  {formatDate(post.publishedAt, locale)}
                 </div>
               )}
 

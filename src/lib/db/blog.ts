@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { localizedField, pickLocalized, type Locale } from "@/lib/locale";
 import type { BlogPostListItem, PageMetaItem } from "@/types/database";
 import { PostStatus } from "@prisma/client";
+import { resolveMediaUrl } from "@/lib/uploads";
 
 export async function getBlogPageMeta(locale: Locale): Promise<PageMetaItem> {
   const meta = await prisma.pageMeta.findUnique({ where: { id: "blog" } });
@@ -57,7 +58,7 @@ export async function getBlogPosts(
         : {}),
     },
     include: {
-      user: { select: { name: true } },
+      user: { select: { name: true, displayName: true } },
       category: true,
       tags: { include: { tag: true } },
     },
@@ -69,10 +70,10 @@ export async function getBlogPosts(
     slug: pickLocalized(locale, post.faSlug, post.enSlug),
     title: pickLocalized(locale, post.faTitle, post.enTitle),
     excerpt: pickLocalized(locale, post.faExcerpt, post.enExcerpt),
-    thumbnail: post.thumbnail,
+    thumbnail: resolveMediaUrl(post.thumbnail),
     category: pickLocalized(locale, post.category.faName, post.category.enName),
     categoryKey: pickLocalized(locale, post.category.faSlug, post.category.enSlug),
-    author: post.user.name,
+    author: post.user.displayName || post.user.name,
     readTime: post.readTime,
     publishedAt: post.publishedAt?.toISOString() ?? null,
     tags: post.tags.map((pt) =>
@@ -88,7 +89,7 @@ export async function getBlogPostBySlug(locale: Locale, slug: string) {
       OR: [{ faSlug: slug }, { enSlug: slug }],
     },
     include: {
-      user: { select: { name: true } },
+      user: { select: { name: true, displayName: true } },
       category: true,
       tags: { include: { tag: true } },
     },
@@ -102,10 +103,10 @@ export async function getBlogPostBySlug(locale: Locale, slug: string) {
     title: pickLocalized(locale, post.faTitle, post.enTitle),
     excerpt: pickLocalized(locale, post.faExcerpt, post.enExcerpt),
     content: pickLocalized(locale, post.faContent, post.enContent),
-    thumbnail: post.thumbnail,
+    thumbnail: resolveMediaUrl(post.thumbnail),
     category: pickLocalized(locale, post.category.faName, post.category.enName),
     categoryKey: pickLocalized(locale, post.category.faSlug, post.category.enSlug),
-    author: post.user.name,
+    author: post.user.displayName || post.user.name,
     readTime: post.readTime,
     publishedAt: post.publishedAt?.toISOString() ?? null,
     tags: post.tags.map((pt) =>

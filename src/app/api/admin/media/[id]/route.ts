@@ -1,8 +1,8 @@
 import { unlink } from "fs/promises";
-import path from "path";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { jsonOk, jsonError } from "@/lib/api-response";
+import { getUploadFilePath } from "@/lib/uploads";
 
 export async function DELETE(
   _request: Request,
@@ -16,8 +16,8 @@ export async function DELETE(
   if (!media) return jsonError("Not found", 404);
 
   try {
-    const filepath = path.join(process.cwd(), "public", media.url);
-    await unlink(filepath).catch(() => {});
+    const filename = media.url.replace(/^\/api\/uploads\//, "").replace(/^\/uploads\//, "");
+    await unlink(getUploadFilePath(filename)).catch(() => {});
     await prisma.media.delete({ where: { id } });
     return jsonOk({ success: true });
   } catch (err) {

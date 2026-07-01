@@ -1,4 +1,5 @@
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminAccessGuard from "@/components/admin/AdminAccessGuard";
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 
@@ -13,7 +14,11 @@ export default async function AdminPanelLayout({
   return (
     <div className="flex min-h-screen">
       <AdminSidebar />
-      <main className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</main>
+      <main className="flex-1 overflow-y-auto bg-slate-50/80 dark:bg-slate-950 p-6 lg:p-8">
+        <div className="mx-auto max-w-6xl">
+          <AdminAccessGuard>{children}</AdminAccessGuard>
+        </div>
+      </main>
     </div>
   );
 }
