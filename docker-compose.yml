@@ -1,0 +1,70 @@
+services:
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+
+    command: npx prisma migrate deploy
+
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+
+    networks:
+      - infrastructure
+
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+    restart: unless-stopped
+
+    ports:
+       - "127.0.0.1:5000:5000"
+
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      HOSTNAME: 0.0.0.0
+
+      DATABASE_URL: ${DATABASE_URL}
+
+      SMSIR_API_KEY: ${SMSIR_API_KEY}
+      SMS_LINE_NUMBER: ${SMS_LINE_NUMBER}
+
+    volumes:
+      - ./storage/uploads:/app/uploads
+
+    networks:
+      - infrastructure
+
+  seed:
+    profiles:
+      - seed
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+
+    command: sh -c "npx prisma migrate deploy && npx tsx prisma/seed.ts"
+
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+
+    networks:
+      - infrastructure
+
+    restart: "no"
+
+networks:
+  infrastructure:
+    external: true
