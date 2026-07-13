@@ -32,6 +32,7 @@ ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
 
 RUN npx prisma generate
 
+# Use webpack (not Turbopack) — Turbopack standalone output omits SSR chunks in Docker
 RUN npm run build
 
 ############################
@@ -59,7 +60,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=6000
+ENV PORT=5000
 ENV HOSTNAME=0.0.0.0
 
 RUN apk add --no-cache libc6-compat
@@ -72,7 +73,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-RUN mkdir -p /app/public/uploads
+RUN mkdir -p /app/uploads
 
 USER nextjs
 
