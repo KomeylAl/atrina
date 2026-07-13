@@ -38,9 +38,6 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       AUTH_SECRET: ${AUTH_SECRET}
 
-      SMSIR_API_KEY: ${SMSIR_API_KEY}
-      SMS_LINE_NUMBER: ${SMS_LINE_NUMBER}
-
     volumes:
       - ./storage/uploads:/app/uploads
 
