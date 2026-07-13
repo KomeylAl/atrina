@@ -73,9 +73,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Standalone tracing can omit Prisma engine files — copy them explicitly
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
+# Standalone file tracing is unreliable for Prisma — use full production node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+
+RUN test -f node_modules/@prisma/client/default.js \
+ && test -f node_modules/.prisma/client/index.js
 
 RUN mkdir -p /app/uploads
 
