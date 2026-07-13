@@ -63,7 +63,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=5000
 ENV HOSTNAME=0.0.0.0
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 
 RUN addgroup -S nodejs \
  && adduser -S nextjs -G nodejs
