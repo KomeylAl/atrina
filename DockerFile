@@ -68,15 +68,13 @@ RUN apk add --no-cache libc6-compat openssl
 RUN addgroup -S nodejs \
  && adduser -S nextjs -G nodejs
 
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Standalone file tracing is unreliable for Prisma — use full production node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-RUN test -f node_modules/@prisma/client/default.js \
+RUN ls -la node_modules/@prisma/client \
+ && test -f node_modules/@prisma/client/default.js \
  && test -f node_modules/.prisma/client/index.js
 
 RUN mkdir -p /app/uploads
@@ -85,4 +83,4 @@ USER nextjs
 
 EXPOSE 5000
 
-CMD ["node", "server.js"]
+CMD ["node", "node_modules/next/dist/bin/next", "start", "-H", "0.0.0.0", "-p", "5000"]
