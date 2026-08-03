@@ -154,9 +154,31 @@ model SiteSettings {
   enFooterDescription String @db.Text
   faFooterCopyright   String
   enFooterCopyright   String
+  faFooterLinksTitle  String @default("پیوندهای سریع")
+  enFooterLinksTitle  String @default("Quick Links")
+  faFooterContactTitle String @default("تماس")
+  enFooterContactTitle String @default("Contact")
   careersEmail        String @default("careers@atrina.com")
 
   updatedAt DateTime @updatedAt
+}
+
+model FooterSocialLink {
+  id       String  @id @default(uuid())
+  platform String
+  url      String
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+}
+
+model FooterTrustBadge {
+  id       String  @id @default(uuid())
+  image    String
+  link     String?
+  faAlt    String  @default("")
+  enAlt    String  @default("")
+  order    Int     @default(0)
+  isActive Boolean @default(true)
 }
 
 model NavLink {
@@ -327,6 +349,13 @@ model AboutValue {
   order         Int    @default(0)
 }
 
+model AboutValuesSection {
+  id String @id @default("default")
+
+  faTitle String @default("ارزش‌های ما")
+  enTitle String @default("Our Values")
+}
+
 model AboutTeamSection {
   id String @id @default("default")
 
@@ -350,7 +379,8 @@ model AboutCta {
 model TeamMember {
   id String @id @default(uuid())
 
-  name     String
+  faName   String
+  enName   String
   faRole   String
   enRole   String
   faBio    String? @db.Text

@@ -14,11 +14,12 @@ export async function getAboutPageMeta(locale: Locale): Promise<PageMetaItem> {
 }
 
 export async function getAboutPageData(locale: Locale) {
-  const [story, stats, values, teamSection, cta, teamMembers, settings] =
+  const [story, stats, values, valuesSection, teamSection, cta, teamMembers, settings] =
     await Promise.all([
       prisma.aboutStory.findUnique({ where: { id: "default" } }),
       prisma.aboutStat.findMany({ orderBy: { order: "asc" } }),
       prisma.aboutValue.findMany({ orderBy: { order: "asc" } }),
+      prisma.aboutValuesSection.findUnique({ where: { id: "default" } }),
       prisma.aboutTeamSection.findUnique({ where: { id: "default" } }),
       prisma.aboutCta.findUnique({ where: { id: "default" } }),
       prisma.teamMember.findMany({
@@ -56,7 +57,7 @@ export async function getAboutPageData(locale: Locale) {
       subtitle: localizedField(teamSection, locale, "Subtitle"),
       members: teamMembers.map((m): TeamMemberItem => ({
         id: m.id,
-        name: m.name,
+        name: pickLocalized(locale, m.faName, m.enName),
         role: pickLocalized(locale, m.faRole, m.enRole),
         bio: pickLocalized(locale, m.faBio, m.enBio),
         image: m.image,
@@ -71,6 +72,10 @@ export async function getAboutPageData(locale: Locale) {
       emailLabel: localizedField(cta, locale, "EmailLabel"),
       email: settings?.careersEmail ?? "careers@atrina.com",
     },
-    valuesSectionTitle: locale === "fa" ? "ارزش‌های ما" : "Our Values",
+    valuesSectionTitle: valuesSection
+      ? localizedField(valuesSection, locale, "Title")
+      : locale === "fa"
+        ? "ارزش‌های ما"
+        : "Our Values",
   };
 }

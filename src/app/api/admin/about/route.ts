@@ -6,17 +6,18 @@ export async function GET() {
   const { error } = await requireAdmin();
   if (error) return error;
 
-  const [story, stats, values, teamSection, cta, teamMembers] =
+  const [story, stats, values, valuesSection, teamSection, cta, teamMembers] =
     await Promise.all([
       prisma.aboutStory.findUnique({ where: { id: "default" } }),
       prisma.aboutStat.findMany({ orderBy: { order: "asc" } }),
       prisma.aboutValue.findMany({ orderBy: { order: "asc" } }),
+      prisma.aboutValuesSection.findUnique({ where: { id: "default" } }),
       prisma.aboutTeamSection.findUnique({ where: { id: "default" } }),
       prisma.aboutCta.findUnique({ where: { id: "default" } }),
       prisma.teamMember.findMany({ orderBy: { order: "asc" } }),
     ]);
 
-  return jsonOk({ story, stats, values, teamSection, cta, teamMembers });
+  return jsonOk({ story, stats, values, valuesSection, teamSection, cta, teamMembers });
 }
 
 export async function PUT(request: Request) {
@@ -29,6 +30,13 @@ export async function PUT(request: Request) {
     switch (section) {
       case "story":
         await prisma.aboutStory.upsert({
+          where: { id: "default" },
+          update: data,
+          create: { id: "default", ...data },
+        });
+        break;
+      case "valuesSection":
+        await prisma.aboutValuesSection.upsert({
           where: { id: "default" },
           update: data,
           create: { id: "default", ...data },

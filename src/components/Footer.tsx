@@ -1,9 +1,32 @@
 import Link from "next/link";
 import {
+  Facebook,
+  Github,
+  Instagram,
+  Linkedin,
+  type LucideIcon,
+  MessageCircle,
+  Send,
+  Twitter,
+  Youtube,
+} from "lucide-react";
+import {
   getSiteSettings,
   getFooterNavLinks,
   getFooterContactInfo,
 } from "@/lib/db/site";
+
+const SOCIAL_ICONS: Record<string, LucideIcon> = {
+  linkedin: Linkedin,
+  twitter: Twitter,
+  x: Twitter,
+  github: Github,
+  instagram: Instagram,
+  youtube: Youtube,
+  facebook: Facebook,
+  telegram: Send,
+  whatsapp: MessageCircle,
+};
 
 const Footer = async ({ lang }: { lang: "fa" | "en" }) => {
   const [settings, footerNavLinks, footerContact] = await Promise.all([
@@ -11,9 +34,6 @@ const Footer = async ({ lang }: { lang: "fa" | "en" }) => {
     getFooterNavLinks(lang),
     getFooterContactInfo(),
   ]);
-
-  const linksTitle = lang === "fa" ? "لینک‌های سریع" : "Quick Links";
-  const contactTitle = lang === "fa" ? "تماس" : "Contact";
 
   return (
     <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
@@ -31,14 +51,34 @@ const Footer = async ({ lang }: { lang: "fa" | "en" }) => {
             <p className="text-slate-600 dark:text-slate-400 max-w-md">
               {settings.footerDescription}
             </p>
+
+            {settings.socialLinks.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 mt-6">
+                {settings.socialLinks.map((social) => {
+                  const Icon = SOCIAL_ICONS[social.platform.toLowerCase()] ?? Github;
+                  return (
+                    <a
+                      key={social.id}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.platform}
+                      className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-slate-600 dark:text-slate-400"
+                    >
+                      <Icon className="h-5 w-5" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">
-              {linksTitle}
+              {settings.footerLinksTitle}
             </h3>
             <ul className="space-y-2">
-              {footerNavLinks.map((link: { path: string, name: string }) => (
+              {footerNavLinks.map((link: { path: string; name: string }) => (
                 <li key={link.path}>
                   <Link
                     href={link.path}
@@ -53,7 +93,7 @@ const Footer = async ({ lang }: { lang: "fa" | "en" }) => {
 
           <div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">
-              {contactTitle}
+              {settings.footerContactTitle}
             </h3>
             <ul className="space-y-2 text-slate-600 dark:text-slate-400">
               {footerContact.map((value: string, index: number) => (
@@ -63,9 +103,39 @@ const Footer = async ({ lang }: { lang: "fa" | "en" }) => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 text-center text-slate-600 dark:text-slate-400">
-          <p>{settings.footerCopyright}</p>
-        </div>
+        {(settings.trustBadges.length > 0 || settings.footerCopyright) && (
+          <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
+            {settings.trustBadges.length > 0 && (
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                {settings.trustBadges.map((badge) => {
+                  const image = (
+                    <img
+                      src={badge.image}
+                      alt={badge.alt || "trust badge"}
+                      className="h-16 w-auto object-contain"
+                    />
+                  );
+                  return badge.link ? (
+                    <a
+                      key={badge.id}
+                      href={badge.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="opacity-90 hover:opacity-100 transition-opacity"
+                    >
+                      {image}
+                    </a>
+                  ) : (
+                    <div key={badge.id}>{image}</div>
+                  );
+                })}
+              </div>
+            )}
+            <p className="text-center text-slate-600 dark:text-slate-400 md:ms-auto">
+              {settings.footerCopyright}
+            </p>
+          </div>
+        )}
       </div>
     </footer>
   );

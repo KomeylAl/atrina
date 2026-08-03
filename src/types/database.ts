@@ -134,12 +134,29 @@ export interface PageMetaItem {
   description: string;
 }
 
+export interface FooterSocialItem {
+  id: string;
+  platform: string;
+  url: string;
+}
+
+export interface FooterTrustBadgeItem {
+  id: string;
+  image: string;
+  link: string | null;
+  alt: string;
+}
+
 export interface SiteSettingsData {
   logo: string;
   footerDescription: string;
   footerCopyright: string;
+  footerLinksTitle: string;
+  footerContactTitle: string;
   careersEmail: string;
   navLinks: LocalizedNavLink[];
+  socialLinks: FooterSocialItem[];
+  trustBadges: FooterTrustBadgeItem[];
 }
 
 export type { Locale };

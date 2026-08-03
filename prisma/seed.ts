@@ -32,6 +32,8 @@ async function main() {
   await prisma.homeSkillItem.deleteMany();
   await prisma.homeHeroSlide.deleteMany();
   await prisma.navLink.deleteMany();
+  await prisma.footerSocialLink.deleteMany();
+  await prisma.footerTrustBadge.deleteMany();
   await prisma.media.deleteMany();
   await prisma.user.deleteMany();
 
@@ -53,9 +55,22 @@ async function main() {
       enFooterDescription: en.footer.footerDescription,
       faFooterCopyright: fa.footer.footerCopyRight,
       enFooterCopyright: en.footer.footerCopyRight,
+      faFooterLinksTitle: fa.footer.footerLinksTitle,
+      enFooterLinksTitle: en.footer.footerLinksTitle,
+      faFooterContactTitle: fa.footer.footerContactTitle,
+      enFooterContactTitle: en.footer.footerContactTitle,
       careersEmail: "careers@atrina.com",
     },
   });
+
+  const socialSeeds = [
+    { platform: "linkedin", url: "https://linkedin.com", order: 0 },
+    { platform: "github", url: "https://github.com", order: 1 },
+    { platform: "instagram", url: "https://instagram.com", order: 2 },
+  ];
+  for (const social of socialSeeds) {
+    await prisma.footerSocialLink.create({ data: social });
+  }
 
   const navPaths = [
     { path: "/", fa: "خانه", en: "Home" },
@@ -271,6 +286,15 @@ async function main() {
     });
   }
 
+  await prisma.aboutValuesSection.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
+      faTitle: "ارزش‌های ما",
+      enTitle: "Our Values",
+    },
+  });
+
   await prisma.aboutTeamSection.upsert({
     where: { id: "default" },
     update: {},
@@ -297,21 +321,24 @@ async function main() {
 
   const teamMembers = [
     {
-      name: "Ali Rezaei",
+      faName: "علی رضایی",
+      enName: "Ali Rezaei",
       faRole: "مدیر فنی",
       enRole: "CTO",
       faBio: "بیش از ۱۰ سال تجربه در توسعه نرم‌افزار و معماری سیستم.",
       enBio: "10+ years of experience in software development and system architecture.",
     },
     {
-      name: "Sara Mohammadi",
+      faName: "سارا محمدی",
+      enName: "Sara Mohammadi",
       faRole: "طراح UI/UX",
       enRole: "UI/UX Designer",
       faBio: "متخصص طراحی تجربه کاربری با تمرکز بر محصولات B2B.",
       enBio: "UX specialist focused on B2B product design.",
     },
     {
-      name: "Reza Karimi",
+      faName: "رضا کریمی",
+      enName: "Reza Karimi",
       faRole: "توسعه‌دهنده ارشد",
       enRole: "Senior Developer",
       faBio: "متخصص React، Next.js و Node.js.",
