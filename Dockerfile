@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1
 
+############################
+# Base
+############################
 FROM node:22-alpine AS base
 
 RUN apk add --no-cache libc6-compat openssl
@@ -8,20 +11,21 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-##########################################
-
+############################
+# Dependencies
+############################
 FROM base AS deps
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm install
 
-##########################################
-
+############################
+# Builder
+############################
 FROM base AS builder
 
 COPY --from=deps /app/node_modules ./node_modules
-
 COPY . .
 
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
@@ -30,13 +34,15 @@ RUN npx prisma generate
 
 RUN npm run build
 
-##########################################
-
+############################
+# Migrator
+############################
 FROM base AS migrator
 
 COPY --from=deps /app/node_modules ./node_modules
 
 COPY prisma ./prisma
+COPY src ./src
 COPY prisma.config.ts ./
 COPY package.json ./
 
@@ -44,29 +50,29 @@ ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
 
 RUN npx prisma generate
 
-##########################################
-
+############################
+# Runner
+############################
 FROM node:22-alpine AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV HOSTNAME=0.0.0.0
 ENV PORT=5000
+ENV HOSTNAME=0.0.0.0
 
-RUN apk add --no-cache libc6-compat openssl
+RUN apk add --no-cache libc6-compat
 
 RUN addgroup -S nodejs \
  && adduser -S nextjs -G nodejs
 
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/server ./.next/server
 
-RUN mkdir -p /app/uploads
+RUN mkdir -p /app/public/uploads
 
 USER nextjs
 

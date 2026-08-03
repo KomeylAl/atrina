@@ -36,10 +36,9 @@ services:
       HOSTNAME: 0.0.0.0
 
       DATABASE_URL: ${DATABASE_URL}
-      AUTH_SECRET: ${AUTH_SECRET}
 
     volumes:
-      - ./storage/uploads:/app/uploads
+      - ./storage/uploads:/app/public/uploads
 
     networks:
       - infrastructure
