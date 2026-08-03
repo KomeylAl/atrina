@@ -62,7 +62,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=5000
 ENV HOSTNAME=0.0.0.0
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat su-exec
 
 RUN addgroup -S nodejs \
  && adduser -S nextjs -G nodejs
@@ -72,10 +72,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/.next/server ./.next/server
 
-RUN mkdir -p /app/uploads && chown nextjs:nodejs /app/uploads
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+ && mkdir -p /app/uploads \
+ && chown nextjs:nodejs /app/uploads
 
-USER nextjs
-
+# Entrypoint runs as root to fix bind-mount ownership, then drops to nextjs
 EXPOSE 5000
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["node", "server.js"]
