@@ -73,15 +73,25 @@ export async function getProjectBySlug(locale: Locale, slug: string) {
 
   return {
     id: project.id,
+    faSlug: project.faSlug,
+    enSlug: project.enSlug,
     slug: pickLocalized(locale, project.faSlug, project.enSlug),
     name: pickLocalized(locale, project.faName, project.enName),
+    seoTitle: pickLocalized(locale, project.faSeoTitle, project.enSeoTitle),
     description: pickLocalized(locale, project.faDescription, project.enDescription),
+    seoDescription: pickLocalized(
+      locale,
+      project.faSeoDescription,
+      project.enSeoDescription,
+    ),
     thumbnail: resolveMediaUrl(project.thumbnail),
+    ogImage: resolveMediaUrl(project.ogImage),
     category: pickLocalized(locale, project.category.faName, project.category.enName),
     categoryKey: project.category.key,
     client: project.client,
     technologies: project.technologies,
     completionDate: project.completionDate?.toISOString() ?? null,
     status: project.status,
+    noIndex: project.noIndex,
   };
 }

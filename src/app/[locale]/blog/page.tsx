@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import BlogFilters from "@/components/BlogFilters";
 import BlogList from "@/components/BlogList";
 import BlogSearch from "@/components/BlogSearch";
@@ -6,6 +7,37 @@ import {
   getBlogCategories,
   getBlogPageMeta,
 } from "@/lib/db/blog";
+import { buildBreadcrumbJsonLd, buildMetadata, localizedPath } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ category?: string; q?: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale as "fa" | "en";
+  const meta = await getBlogPageMeta(locale);
+  const { category, q } = (await searchParams) || {};
+  const hasFilters = Boolean((category && category !== "all") || q);
+
+  return buildMetadata({
+    locale,
+    path: "/blog",
+    title: meta.title,
+    description: meta.description,
+    noIndex: hasFilters,
+    alternates: {
+      canonical: localizedPath(locale, "/blog"),
+      languages: {
+        fa: localizedPath("fa", "/blog"),
+        en: localizedPath("en", "/blog"),
+        "x-default": "/fa",
+      },
+    },
+  });
+}
 
 export default async function Blog({
   searchParams,
@@ -23,9 +55,17 @@ export default async function Blog({
     getBlogCategories(locale),
     getBlogPosts(locale, { category, search: searchQuery }),
   ]);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "fa" ? "خانه" : "Home", path: "/" },
+    { name: meta.title, path: "/blog" },
+  ]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <section className="bg-linear-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-20">
         <div className="max-w-7xl mx-auto px-6">
           <h1 className="text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-6">

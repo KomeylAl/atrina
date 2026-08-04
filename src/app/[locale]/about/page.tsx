@@ -1,9 +1,28 @@
+import type { Metadata } from "next";
 import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AboutStat from "@/components/AboutStat";
 import AboutValue from "@/components/AboutValue";
 import AboutMember from "@/components/AboutMember";
 import { getAboutPageData, getAboutPageMeta } from "@/lib/db/about";
+import { buildBreadcrumbJsonLd, buildMetadata } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale as "fa" | "en";
+  const meta = await getAboutPageMeta(locale);
+
+  return buildMetadata({
+    locale,
+    path: "/about",
+    title: meta.title,
+    description: meta.description,
+  });
+}
 
 export default async function About({
   params,
@@ -17,9 +36,17 @@ export default async function About({
     getAboutPageMeta(locale),
     getAboutPageData(locale),
   ]);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "fa" ? "خانه" : "Home", path: "/" },
+    { name: meta.title, path: "/about" },
+  ]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <section className="bg-linear-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-20">
         <div className="max-w-7xl mx-auto px-6">
           <h1 className="text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-6">

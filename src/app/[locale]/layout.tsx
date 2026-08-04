@@ -3,10 +3,19 @@ import "../globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getSiteSettings } from "@/lib/db/site";
+import { getSiteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Atrina Dev",
+  metadataBase: getSiteUrl(),
+  title: {
+    default: "Atrina Dev",
+    template: "%s | Atrina Dev",
+  },
   description: "Building exceptional software solutions",
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default async function RootLayout({

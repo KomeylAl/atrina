@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import ContactInfo from "@/components/ContactInfo";
 import ContactForm from "@/components/ContactForm";
 import ContactHeader from "@/components/ContactHeader";
@@ -7,6 +8,24 @@ import {
   getContactPageMeta,
   getContactMethods,
 } from "@/lib/db/contact";
+import { buildBreadcrumbJsonLd, buildMetadata } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale as "fa" | "en";
+  const meta = await getContactPageMeta(locale);
+
+  return buildMetadata({
+    locale,
+    path: "/contact",
+    title: meta.title,
+    description: meta.description,
+  });
+}
 
 export default async function Contact({
   params,
@@ -21,6 +40,10 @@ export default async function Contact({
     getContactMethods(locale),
     getContactPageInfo(locale),
   ]);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "fa" ? "خانه" : "Home", path: "/" },
+    { name: meta.title, path: "/contact" },
+  ]);
 
   const contactMethods = methods.map((method) => ({
     type: method.type,
@@ -32,6 +55,10 @@ export default async function Contact({
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <section className="bg-linear-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-20">
         <div className="max-w-7xl mx-auto px-6">
           <ContactHeader title={meta.title} description={meta.description} />

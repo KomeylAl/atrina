@@ -1,9 +1,53 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Lightbulb, Target, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BackArrow } from "@/components/icons/DirectionalIcon";
 import { getWorkBySlug } from "@/lib/db/works";
+import {
+  buildBreadcrumbJsonLd,
+  buildMetadata,
+  localizedPath,
+  stripHtml,
+} from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale, slug } = await params;
+  const locale = rawLocale as "fa" | "en";
+  const work = await getWorkBySlug(locale, slug);
+
+  if (!work) {
+    return buildMetadata({
+      locale,
+      path: "/work",
+      title: locale === "fa" ? "نمونه‌کارها" : "Work",
+      description: locale === "fa" ? "نمونه‌کار یافت نشد." : "Case study not found.",
+      noIndex: true,
+    });
+  }
+
+  return buildMetadata({
+    locale,
+    path: `/work/${work.slug}`,
+    title: work.seoTitle || work.title,
+    description: work.seoDescription || stripHtml(work.description),
+    image: work.ogImage || work.thumbnail,
+    noIndex: work.noIndex,
+    alternates: {
+      canonical: localizedPath(locale, `/work/${work.slug}`),
+      languages: {
+        fa: localizedPath("fa", `/work/${work.faSlug}`),
+        en: localizedPath("en", `/work/${work.enSlug}`),
+        "x-default": "/fa",
+      },
+    },
+  });
+}
 
 export default async function WorkDetailPage({
   params,
@@ -21,9 +65,30 @@ export default async function WorkDetailPage({
     solution: locale === "fa" ? "راه‌حل" : "Our Solution",
     results: locale === "fa" ? "نتایج" : "Results",
   };
+  const workJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: work.title,
+    description: work.seoDescription || stripHtml(work.description),
+    image: work.ogImage || work.thumbnail || undefined,
+    inLanguage: locale,
+  };
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "fa" ? "خانه" : "Home", path: "/" },
+    { name: locale === "fa" ? "نمونه‌کارها" : "Work", path: "/work" },
+    { name: work.title, path: `/work/${work.slug}` },
+  ]);
 
   return (
     <article className="min-h-screen bg-white dark:bg-slate-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(workJsonLd) }}
+      />
       <div className="bg-linear-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-16">
         <div className="max-w-5xl mx-auto px-6">
           <Link href={`/${locale}/work`} className="inline-flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400 mb-8 hover:underline">

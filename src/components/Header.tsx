@@ -36,6 +36,15 @@ const Header = ({ lang, logo, navLinks }: HeaderProps) => {
     }
   };
 
+  const otherLocale = lang === "fa" ? "en" : "fa";
+  const switchedPath =
+    currentPageName.replace(/^\/(fa|en)(?=\/|$)/, `/${otherLocale}`) ||
+    `/${otherLocale}`;
+
+  function rememberLocale(locale: "fa" | "en") {
+    document.cookie = `atrina_locale=${locale}; path=/; max-age=31536000; samesite=lax`;
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
       <nav className="max-w-7xl mx-auto px-6 py-4">
@@ -76,7 +85,8 @@ const Header = ({ lang, logo, navLinks }: HeaderProps) => {
               )}
             </button>
             <Link
-              href={lang === "fa" ? "/en" : "/fa"}
+              href={switchedPath}
+              onClick={() => rememberLocale(otherLocale)}
               className="ml-4 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
               aria-label="Switch language"
             >

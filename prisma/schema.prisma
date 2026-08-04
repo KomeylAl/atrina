@@ -116,8 +116,14 @@ model Post {
   enSlug    String @unique
   faExcerpt String
   enExcerpt String
+  faSeoTitle String?
+  enSeoTitle String?
+  faSeoDescription String? @db.Text
+  enSeoDescription String? @db.Text
   faContent String @db.Text
   enContent String @db.Text
+  ogImage   String?
+  noIndex   Boolean @default(false)
   status    PostStatus @default(DRAFT)
   thumbnail String
   readTime  Int?
@@ -457,6 +463,12 @@ model Project {
   enSlug        String @unique
   faDescription String @db.Text
   enDescription String @db.Text
+  faSeoTitle String?
+  enSeoTitle String?
+  faSeoDescription String? @db.Text
+  enSeoDescription String? @db.Text
+  ogImage String?
+  noIndex Boolean @default(false)
   client        String?
   technologies  String[]
   thumbnail     String?
@@ -494,6 +506,12 @@ model Work {
   enSlug        String @unique
   faDescription String @db.Text
   enDescription String @db.Text
+  faSeoTitle String?
+  enSeoTitle String?
+  faSeoDescription String? @db.Text
+  enSeoDescription String? @db.Text
+  ogImage String?
+  noIndex Boolean  @default(false)
   faChallenge   String? @db.Text
   enChallenge   String? @db.Text
   faSolution    String? @db.Text

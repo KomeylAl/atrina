@@ -28,6 +28,9 @@ export default function WorkForm({ workId }: WorkFormProps) {
   const [form, setForm] = useState({
     faTitle: "", enTitle: "", faSlug: "", enSlug: "",
     faDescription: "", enDescription: "",
+    faSeoTitle: "", enSeoTitle: "",
+    faSeoDescription: "", enSeoDescription: "",
+    ogImage: "", noIndex: false,
     faChallenge: "", enChallenge: "",
     faSolution: "", enSolution: "",
     faResults: "", enResults: "",
@@ -43,6 +46,9 @@ export default function WorkForm({ workId }: WorkFormProps) {
         setForm({
           faTitle: w.faTitle, enTitle: w.enTitle, faSlug: w.faSlug, enSlug: w.enSlug,
           faDescription: w.faDescription, enDescription: w.enDescription,
+          faSeoTitle: w.faSeoTitle ?? "", enSeoTitle: w.enSeoTitle ?? "",
+          faSeoDescription: w.faSeoDescription ?? "", enSeoDescription: w.enSeoDescription ?? "",
+          ogImage: w.ogImage ?? "", noIndex: w.noIndex ?? false,
           faChallenge: w.faChallenge ?? "", enChallenge: w.enChallenge ?? "",
           faSolution: w.faSolution ?? "", enSolution: w.enSolution ?? "",
           faResults: w.faResults ?? "", enResults: w.enResults ?? "",
@@ -100,6 +106,14 @@ export default function WorkForm({ workId }: WorkFormProps) {
               <div><Label>English Title</Label><Input value={form.enTitle} onChange={(e) => update("enTitle", e.target.value)} required className="mt-1" /></div>
             </div>
             <BilingualRichText faLabel="توضیحات" enLabel="Description" faValue={form.faDescription} enValue={form.enDescription} onFaChange={(v) => update("faDescription", v)} onEnChange={(v) => update("enDescription", v)} />
+            <div className="grid grid-cols-2 gap-4">
+              <div><Label>SEO Title فارسی</Label><Input value={form.faSeoTitle} onChange={(e) => update("faSeoTitle", e.target.value)} className="mt-1" /></div>
+              <div><Label>SEO Title English</Label><Input value={form.enSeoTitle} onChange={(e) => update("enSeoTitle", e.target.value)} className="mt-1" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><Label>SEO Description فارسی</Label><Input value={form.faSeoDescription} onChange={(e) => update("faSeoDescription", e.target.value)} className="mt-1" /></div>
+              <div><Label>SEO Description English</Label><Input value={form.enSeoDescription} onChange={(e) => update("enSeoDescription", e.target.value)} className="mt-1" /></div>
+            </div>
             <BilingualRichText faLabel="چالش" enLabel="Challenge" faValue={form.faChallenge} enValue={form.enChallenge} onFaChange={(v) => update("faChallenge", v)} onEnChange={(v) => update("enChallenge", v)} />
             <BilingualRichText faLabel="راه‌حل" enLabel="Solution" faValue={form.faSolution} enValue={form.enSolution} onFaChange={(v) => update("faSolution", v)} onEnChange={(v) => update("enSolution", v)} />
             <BilingualRichText faLabel="نتایج" enLabel="Results" faValue={form.faResults} enValue={form.enResults} onFaChange={(v) => update("faResults", v)} onEnChange={(v) => update("enResults", v)} />
@@ -117,8 +131,13 @@ export default function WorkForm({ workId }: WorkFormProps) {
               <input type="checkbox" checked={form.isPublished} onChange={(e) => update("isPublished", e.target.checked)} />
               منتشر شده
             </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={form.noIndex} onChange={(e) => update("noIndex", e.target.checked)} />
+              عدم ایندکس این صفحه
+            </label>
             <TagsInput value={form.technologies} onChange={(v) => update("technologies", v)} />
             <ImagePicker value={form.thumbnail} onChange={(v) => update("thumbnail", v)} label="تصویر شاخص" />
+            <ImagePicker value={form.ogImage} onChange={(v) => update("ogImage", v)} label="تصویر OG (اختیاری)" />
             <ImagePicker multiple value={form.galleryImages} onChange={(v) => update("galleryImages", v)} label="گالری تصاویر" />
           </CardContent></Card>
         </div>

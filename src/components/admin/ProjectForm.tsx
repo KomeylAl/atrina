@@ -29,6 +29,9 @@ export default function ProjectForm({ projectId }: ProjectFormProps) {
   const [form, setForm] = useState({
     faName: "", enName: "", faSlug: "", enSlug: "",
     faDescription: "", enDescription: "",
+    faSeoTitle: "", enSeoTitle: "",
+    faSeoDescription: "", enSeoDescription: "",
+    ogImage: "", noIndex: false,
     client: "", technologies: [] as string[],
     thumbnail: "", categoryId: "", status: "COMPLETED",
     isPublished: true, isFeatured: false, order: 0,
@@ -42,6 +45,9 @@ export default function ProjectForm({ projectId }: ProjectFormProps) {
         setForm({
           faName: p.faName, enName: p.enName, faSlug: p.faSlug, enSlug: p.enSlug,
           faDescription: p.faDescription, enDescription: p.enDescription,
+          faSeoTitle: p.faSeoTitle ?? "", enSeoTitle: p.enSeoTitle ?? "",
+          faSeoDescription: p.faSeoDescription ?? "", enSeoDescription: p.enSeoDescription ?? "",
+          ogImage: p.ogImage ?? "", noIndex: p.noIndex ?? false,
           client: p.client ?? "", technologies: p.technologies ?? [],
           thumbnail: p.thumbnail ?? "", categoryId: p.categoryId,
           status: p.status, isPublished: p.isPublished, isFeatured: p.isFeatured ?? false, order: p.order,
@@ -109,6 +115,14 @@ export default function ProjectForm({ projectId }: ProjectFormProps) {
               faValue={form.faDescription} enValue={form.enDescription}
               onFaChange={(v) => update("faDescription", v)} onEnChange={(v) => update("enDescription", v)}
             />
+            <div className="grid grid-cols-2 gap-4">
+              <div><Label>SEO Title فارسی</Label><Input value={form.faSeoTitle} onChange={(e) => update("faSeoTitle", e.target.value)} className="mt-1" /></div>
+              <div><Label>SEO Title English</Label><Input value={form.enSeoTitle} onChange={(e) => update("enSeoTitle", e.target.value)} className="mt-1" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><Label>SEO Description فارسی</Label><Input value={form.faSeoDescription} onChange={(e) => update("faSeoDescription", e.target.value)} className="mt-1" /></div>
+              <div><Label>SEO Description English</Label><Input value={form.enSeoDescription} onChange={(e) => update("enSeoDescription", e.target.value)} className="mt-1" /></div>
+            </div>
           </CardContent></Card>
         </div>
         <div className="space-y-6">
@@ -136,8 +150,13 @@ export default function ProjectForm({ projectId }: ProjectFormProps) {
               <input type="checkbox" checked={form.isFeatured} onChange={(e) => update("isFeatured", e.target.checked)} />
               نمایش در صفحه اصلی
             </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={form.noIndex} onChange={(e) => update("noIndex", e.target.checked)} />
+              عدم ایندکس این صفحه
+            </label>
             <TagsInput value={form.technologies} onChange={(v) => update("technologies", v)} label="تکنولوژی‌ها" />
             <ImagePicker value={form.thumbnail} onChange={(v) => update("thumbnail", v)} />
+            <ImagePicker value={form.ogImage} onChange={(v) => update("ogImage", v)} label="تصویر OG (اختیاری)" />
           </CardContent></Card>
         </div>
       </div>

@@ -99,15 +99,25 @@ export async function getBlogPostBySlug(locale: Locale, slug: string) {
 
   return {
     id: post.id,
+    faSlug: post.faSlug,
+    enSlug: post.enSlug,
     slug: pickLocalized(locale, post.faSlug, post.enSlug),
     title: pickLocalized(locale, post.faTitle, post.enTitle),
+    seoTitle: pickLocalized(locale, post.faSeoTitle, post.enSeoTitle),
     excerpt: pickLocalized(locale, post.faExcerpt, post.enExcerpt),
+    seoDescription: pickLocalized(
+      locale,
+      post.faSeoDescription,
+      post.enSeoDescription,
+    ),
     content: pickLocalized(locale, post.faContent, post.enContent),
     thumbnail: resolveMediaUrl(post.thumbnail),
+    ogImage: resolveMediaUrl(post.ogImage),
     category: pickLocalized(locale, post.category.faName, post.category.enName),
     categoryKey: pickLocalized(locale, post.category.faSlug, post.category.enSlug),
     author: post.user.displayName || post.user.name,
     readTime: post.readTime,
+    noIndex: post.noIndex,
     publishedAt: post.publishedAt?.toISOString() ?? null,
     tags: post.tags.map((pt) =>
       pickLocalized(locale, pt.tag.faName, pt.tag.enName),

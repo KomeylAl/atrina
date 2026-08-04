@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ForwardArrow } from "@/components/icons/DirectionalIcon";
@@ -8,6 +9,30 @@ import HeroSlider from "@/components/HeroSlider";
 import HomeLatestPosts from "@/components/HomeLatestPosts";
 import HomeFeaturedProjects from "@/components/HomeFeaturedProjects";
 import { getHomePageData } from "@/lib/db/home";
+import {
+  buildMetadata,
+  buildOrganizationJsonLd,
+  buildWebsiteJsonLd,
+} from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale as "fa" | "en";
+  const data = await getHomePageData(locale);
+  const firstSlide = data.heroSlides[0];
+  const title = `${firstSlide.titleTop} ${firstSlide.titleBottom}`.trim();
+
+  return buildMetadata({
+    locale,
+    path: "/",
+    title,
+    description: firstSlide.description,
+  });
+}
 
 export default async function Home({
   params,
@@ -17,9 +42,19 @@ export default async function Home({
   const { locale: rawLocale } = await params;
   const locale = rawLocale as "fa" | "en";
   const data = await getHomePageData(locale);
+  const websiteJsonLd = buildWebsiteJsonLd(locale);
+  const organizationJsonLd = buildOrganizationJsonLd(locale);
 
   return (
     <div className="bg-white dark:bg-slate-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       <section className="relative overflow-hidden bg-linear-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
         <div className="absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800/20 mask-[linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:mask-[linear-gradient(0deg,rgba(0,0,0,1),rgba(0,0,0,0.6))]" />
         <HeroSlider slides={data.heroSlides} locale={locale} />

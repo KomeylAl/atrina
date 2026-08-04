@@ -32,9 +32,15 @@ export default function BlogPostForm({ postId }: BlogPostFormProps) {
     enSlug: "",
     faExcerpt: "",
     enExcerpt: "",
+    faSeoTitle: "",
+    enSeoTitle: "",
+    faSeoDescription: "",
+    enSeoDescription: "",
     faContent: "",
     enContent: "",
     thumbnail: "",
+    ogImage: "",
+    noIndex: false,
     categoryId: "",
     status: "DRAFT",
     readTime: 5,
@@ -61,9 +67,15 @@ export default function BlogPostForm({ postId }: BlogPostFormProps) {
             enSlug: post.enSlug,
             faExcerpt: post.faExcerpt,
             enExcerpt: post.enExcerpt,
+            faSeoTitle: post.faSeoTitle ?? "",
+            enSeoTitle: post.enSeoTitle ?? "",
+            faSeoDescription: post.faSeoDescription ?? "",
+            enSeoDescription: post.enSeoDescription ?? "",
             faContent: post.faContent,
             enContent: post.enContent,
             thumbnail: post.thumbnail,
+            ogImage: post.ogImage ?? "",
+            noIndex: post.noIndex ?? false,
             categoryId: post.categoryId,
             status: post.status,
             readTime: post.readTime ?? 5,
@@ -74,7 +86,7 @@ export default function BlogPostForm({ postId }: BlogPostFormProps) {
     }
   }, [postId]);
 
-  function updateField(field: string, value: string | number | string[]) {
+  function updateField(field: string, value: string | number | string[] | boolean) {
     setForm((prev) => {
       const next = { ...prev, [field]: value };
       if (field === "faTitle" && !isEdit) {
@@ -213,6 +225,32 @@ export default function BlogPostForm({ postId }: BlogPostFormProps) {
               />
             </CardContent>
           </Card>
+
+          <Card>
+            <CardContent className="p-6 space-y-4">
+              <h3 className="font-semibold">SEO</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>SEO Title فارسی</Label>
+                  <Input value={form.faSeoTitle} onChange={(e) => updateField("faSeoTitle", e.target.value)} className="mt-1" />
+                </div>
+                <div>
+                  <Label>SEO Title English</Label>
+                  <Input value={form.enSeoTitle} onChange={(e) => updateField("enSeoTitle", e.target.value)} className="mt-1" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>SEO Description فارسی</Label>
+                  <Input value={form.faSeoDescription} onChange={(e) => updateField("faSeoDescription", e.target.value)} className="mt-1" />
+                </div>
+                <div>
+                  <Label>SEO Description English</Label>
+                  <Input value={form.enSeoDescription} onChange={(e) => updateField("enSeoDescription", e.target.value)} className="mt-1" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-6">
@@ -257,6 +295,15 @@ export default function BlogPostForm({ postId }: BlogPostFormProps) {
                 value={form.thumbnail}
                 onChange={(url) => updateField("thumbnail", url)}
               />
+              <ImagePicker
+                value={form.ogImage}
+                onChange={(url) => updateField("ogImage", url)}
+                label="تصویر OG (اختیاری)"
+              />
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={form.noIndex} onChange={(e) => updateField("noIndex", e.target.checked)} />
+                عدم ایندکس این صفحه
+              </label>
             </CardContent>
           </Card>
 

@@ -74,10 +74,19 @@ export async function getWorkBySlug(locale: Locale, slug: string) {
 
   return {
     id: work.id,
+    faSlug: work.faSlug,
+    enSlug: work.enSlug,
     slug: pickLocalized(locale, work.faSlug, work.enSlug),
     title: pickLocalized(locale, work.faTitle, work.enTitle),
+    seoTitle: pickLocalized(locale, work.faSeoTitle, work.enSeoTitle),
     description: pickLocalized(locale, work.faDescription, work.enDescription),
-    thumbnail: work.thumbnail,
+    seoDescription: pickLocalized(
+      locale,
+      work.faSeoDescription,
+      work.enSeoDescription,
+    ),
+    thumbnail: resolveMediaUrl(work.thumbnail),
+    ogImage: resolveMediaUrl(work.ogImage),
     category: pickLocalized(locale, work.category.faName, work.category.enName),
     categoryKey: work.category.key,
     challenge: pickLocalized(locale, work.faChallenge ?? "", work.enChallenge ?? "") || null,
@@ -85,5 +94,6 @@ export async function getWorkBySlug(locale: Locale, slug: string) {
     results: pickLocalized(locale, work.faResults ?? "", work.enResults ?? "") || null,
     technologies: work.technologies,
     galleryImages: work.galleryImages.map(resolveMediaUrl),
+    noIndex: work.noIndex,
   };
 }

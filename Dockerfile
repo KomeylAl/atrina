@@ -71,6 +71,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/.next/server ./.next/server
+# geoip-lite data files are needed for IP-based locale detection in proxy
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/geoip-lite ./node_modules/geoip-lite
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh \

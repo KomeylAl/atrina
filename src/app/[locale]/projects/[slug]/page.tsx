@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Calendar } from "lucide-react";
@@ -5,6 +6,49 @@ import { Badge } from "@/components/ui/badge";
 import { BackArrow } from "@/components/icons/DirectionalIcon";
 import { getProjectBySlug } from "@/lib/db/projects";
 import { formatMonthYear, type AppLocale } from "@/lib/format-locale";
+import {
+  buildBreadcrumbJsonLd,
+  buildMetadata,
+  localizedPath,
+  stripHtml,
+} from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale, slug } = await params;
+  const locale = rawLocale as AppLocale;
+  const project = await getProjectBySlug(locale, slug);
+
+  if (!project) {
+    return buildMetadata({
+      locale,
+      path: "/projects",
+      title: locale === "fa" ? "پروژه‌ها" : "Projects",
+      description: locale === "fa" ? "پروژه یافت نشد." : "Project not found.",
+      noIndex: true,
+    });
+  }
+
+  return buildMetadata({
+    locale,
+    path: `/projects/${project.slug}`,
+    title: project.seoTitle || project.name,
+    description: project.seoDescription || stripHtml(project.description),
+    image: project.ogImage || project.thumbnail,
+    noIndex: project.noIndex,
+    alternates: {
+      canonical: localizedPath(locale, `/projects/${project.slug}`),
+      languages: {
+        fa: localizedPath("fa", `/projects/${project.faSlug}`),
+        en: localizedPath("en", `/projects/${project.enSlug}`),
+        "x-default": "/fa",
+      },
+    },
+  });
+}
 
 export default async function ProjectDetailPage({
   params,
@@ -16,9 +60,30 @@ export default async function ProjectDetailPage({
   const project = await getProjectBySlug(locale, slug);
 
   if (!project) notFound();
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.name,
+    description: project.seoDescription || stripHtml(project.description),
+    image: project.ogImage || project.thumbnail || undefined,
+    inLanguage: locale,
+  };
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "fa" ? "خانه" : "Home", path: "/" },
+    { name: locale === "fa" ? "پروژه‌ها" : "Projects", path: "/projects" },
+    { name: project.name, path: `/projects/${project.slug}` },
+  ]);
 
   return (
     <article className="min-h-screen bg-white dark:bg-slate-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }}
+      />
       <div className="relative">
         {project.thumbnail ? (
           <div className="h-64 md:h-96 overflow-hidden">
