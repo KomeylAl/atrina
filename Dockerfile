@@ -18,14 +18,9 @@ FROM base AS deps
 
 COPY package*.json ./
 
-# Install deps, then force Linux/musl native binaries.
-# The lockfile is often generated on Windows and may omit Alpine binaries
-# for lightningcss / @tailwindcss/oxide / Next SWC, which breaks `next build`.
-RUN npm install \
- && npm install --no-save --include=optional \
-      lightningcss-linux-x64-musl@1.30.2 \
-      @tailwindcss/oxide-linux-x64-musl@4.1.17 \
-      @next/swc-linux-x64-musl@16.2.9
+# Install deps; optionalDependencies already include Alpine/musl natives
+# for lightningcss / Tailwind oxide / Next SWC.
+RUN npm install
 
 ############################
 # Builder

@@ -1,13 +1,15 @@
 import path from "path";
 
-/** Persistent upload directory (outside `public/` — survives Next.js builds) */
-export const UPLOAD_DIR =
-  process.env.UPLOAD_DIR ||
-  path.join(/*turbopackIgnore: true*/ process.cwd(), "uploads");
-
+/**
+ * Persistent upload directory (outside `public/` — survives Next.js builds).
+ * Avoid `process.cwd()` here so Turbopack does not NFT-trace the whole project.
+ */
+export function getUploadDir() {
+  return process.env.UPLOAD_DIR || "uploads";
+}
 export function getUploadFilePath(filename: string) {
   const safe = path.basename(filename);
-  return path.join(UPLOAD_DIR, safe);
+  return path.join(getUploadDir(), safe);
 }
 
 export function getUploadPublicUrl(filename: string) {

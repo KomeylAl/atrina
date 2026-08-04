@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { absoluteUrl, localizedPath } from "@/lib/seo";
 
+// Avoid DB access during `next build` (Docker build has no real database).
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [posts, projects, works] = await Promise.all([
     prisma.post.findMany({

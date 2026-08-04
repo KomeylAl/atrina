@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { jsonOk, jsonError } from "@/lib/api-response";
 import {
-  UPLOAD_DIR,
+  getUploadDir,
   getUploadFilePath,
   getUploadPublicUrl,
 } from "@/lib/uploads";
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    await mkdir(UPLOAD_DIR, { recursive: true });
+    await mkdir(getUploadDir(), { recursive: true });
 
     const ext = path.extname(file.name) || ".jpg";
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
