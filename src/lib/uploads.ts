@@ -2,7 +2,8 @@ import path from "path";
 
 /** Persistent upload directory (outside `public/` — survives Next.js builds) */
 export const UPLOAD_DIR =
-  process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");
+  process.env.UPLOAD_DIR ||
+  path.join(/*turbopackIgnore: true*/ process.cwd(), "uploads");
 
 export function getUploadFilePath(filename: string) {
   const safe = path.basename(filename);
