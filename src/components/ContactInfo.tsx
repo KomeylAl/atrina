@@ -2,14 +2,13 @@
 
 import { MapPin } from "lucide-react";
 import { motion } from "framer-motion";
+import type { ContactPageInfoItem } from "@/types/database";
 
 interface ContactInfoProps {
-  locale?: string;
+  info: ContactPageInfoItem;
 }
 
-const ContactInfo = ({ locale = "en" }: ContactInfoProps) => {
-  const isFa = locale === "fa";
-
+const ContactInfo = ({ info }: ContactInfoProps) => {
   return (
     <motion.div
       className="space-y-6"
@@ -22,12 +21,10 @@ const ContactInfo = ({ locale = "en" }: ContactInfoProps) => {
           <MapPin className="h-6 w-6 text-indigo-600 dark:text-indigo-400 shrink-0 mt-1" />
           <div>
             <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
-              {isFa ? "آدرس دفتر" : "Office Location"}
+              {info.officeTitle}
             </h3>
             <p className="text-slate-600 dark:text-slate-400 whitespace-pre-line">
-              {isFa
-                ? "خیابان فناوری ۱۲۳\nتهران، ایران"
-                : "123 Tech Street\nSan Francisco, CA 94107\nUnited States"}
+              {info.officeAddress}
             </p>
           </div>
         </div>
@@ -35,25 +32,17 @@ const ContactInfo = ({ locale = "en" }: ContactInfoProps) => {
 
       <div className="bg-linear-to-br from-indigo-600 to-cyan-600 dark:from-indigo-700 dark:to-cyan-700 rounded-2xl p-6 text-white">
         <h3 className="font-semibold text-xl mb-3">
-          {isFa ? "ساعات کاری" : "Business Hours"}
+          {info.businessHoursTitle}
         </h3>
-        <div className="space-y-2 text-indigo-100">
-          <p>
-            {isFa ? "شنبه تا پنج‌شنبه: ۹ تا ۱۸" : "Monday - Friday: 9am - 6pm"}
-          </p>
-          <p>{isFa ? "جمعه: تعطیل" : "Saturday: 10am - 4pm"}</p>
-          <p>{isFa ? "یکشنبه: تعطیل" : "Sunday: Closed"}</p>
-        </div>
+        <p className="text-indigo-100 whitespace-pre-line">{info.businessHours}</p>
       </div>
 
       <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800">
         <h3 className="font-semibold text-slate-900 dark:text-white mb-3">
-          {isFa ? "زمان پاسخ‌گویی" : "Response Time"}
+          {info.responseTimeTitle}
         </h3>
-        <p className="text-slate-600 dark:text-slate-400">
-          {isFa
-            ? "معمولاً ظرف ۲۴ ساعت در روزهای کاری پاسخ می‌دهیم."
-            : "We typically respond to all inquiries within 24 hours during business days."}
+        <p className="text-slate-600 dark:text-slate-400 whitespace-pre-line">
+          {info.responseTime}
         </p>
       </div>
     </motion.div>

@@ -25,6 +25,7 @@ async function main() {
   await prisma.teamMember.deleteMany();
   await prisma.contactSubmission.deleteMany();
   await prisma.contactMethod.deleteMany();
+  await prisma.contactPageInfo.deleteMany();
   await prisma.aboutStat.deleteMany();
   await prisma.aboutValue.deleteMany();
   await prisma.homeFeature.deleteMany();
@@ -398,6 +399,26 @@ async function main() {
   for (const method of contactMethods) {
     await prisma.contactMethod.create({ data: method });
   }
+
+  await prisma.contactPageInfo.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
+      id: "default",
+      faOfficeTitle: "آدرس دفتر",
+      enOfficeTitle: "Office Location",
+      faOfficeAddress: "خیابان فناوری ۱۲۳\nتهران، ایران",
+      enOfficeAddress: "123 Tech Street\nSan Francisco, CA 94107\nUnited States",
+      faBusinessHoursTitle: "ساعات کاری",
+      enBusinessHoursTitle: "Business Hours",
+      faBusinessHours: "شنبه تا پنج‌شنبه: ۹ تا ۱۸\nجمعه: تعطیل",
+      enBusinessHours: "Monday - Friday: 9am - 6pm\nSaturday - Sunday: Closed",
+      faResponseTimeTitle: "زمان پاسخ‌گویی",
+      enResponseTimeTitle: "Response Time",
+      faResponseTime: "معمولاً ظرف ۲۴ ساعت در روزهای کاری پاسخ می‌دهیم.",
+      enResponseTime: "We typically respond to all inquiries within 24 hours during business days.",
+    },
+  });
 
   const projectCategories = [
     { key: "web", faName: "وب", enName: "Web", order: 0 },

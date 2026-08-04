@@ -18,9 +18,28 @@ import { format } from "date-fns";
 export default function ContactAdminPage() {
   const [data, setData] = useState<any>(null);
   const [editing, setEditing] = useState<any>(null);
+  const [info, setInfo] = useState<any>(null);
 
   useEffect(() => {
-    fetch("/api/admin/contact").then((r) => r.json()).then(setData);
+    fetch("/api/admin/contact").then((r) => r.json()).then((payload) => {
+      setData(payload);
+      setInfo(
+        payload.info ?? {
+          faOfficeTitle: "آدرس دفتر",
+          enOfficeTitle: "Office Location",
+          faOfficeAddress: "",
+          enOfficeAddress: "",
+          faBusinessHoursTitle: "ساعات کاری",
+          enBusinessHoursTitle: "Business Hours",
+          faBusinessHours: "",
+          enBusinessHours: "",
+          faResponseTimeTitle: "زمان پاسخ‌گویی",
+          enResponseTimeTitle: "Response Time",
+          faResponseTime: "",
+          enResponseTime: "",
+        },
+      );
+    });
   }, []);
 
   async function saveMethod() {
@@ -43,6 +62,18 @@ export default function ContactAdminPage() {
     setData(await fetch("/api/admin/contact").then((r) => r.json()));
   }
 
+  async function saveInfo() {
+    await fetch("/api/admin/contact", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ section: "info", data: info }),
+    });
+    toast.success("اطلاعات تماس ذخیره شد");
+    const payload = await fetch("/api/admin/contact").then((r) => r.json());
+    setData(payload);
+    setInfo(payload.info);
+  }
+
   if (!data) return <div className="animate-pulse h-96 bg-slate-200 rounded-xl" />;
 
   return (
@@ -51,9 +82,44 @@ export default function ContactAdminPage() {
 
       <Tabs defaultValue="methods" dir="rtl">
         <TabsList className="mb-6">
+          <TabsTrigger value="info">اطلاعات ثابت تماس</TabsTrigger>
           <TabsTrigger value="methods">روش‌های تماس</TabsTrigger>
           <TabsTrigger value="inbox">صندوق پیام ({data.submissions.filter((s: any) => !s.isRead).length})</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="info">
+          {info && (
+            <Card>
+              <CardContent className="p-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input value={info.faOfficeTitle} placeholder="عنوان آدرس فارسی" onChange={(e) => setInfo({ ...info, faOfficeTitle: e.target.value })} />
+                  <Input value={info.enOfficeTitle} placeholder="Office title" onChange={(e) => setInfo({ ...info, enOfficeTitle: e.target.value })} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Textarea value={info.faOfficeAddress} placeholder="آدرس دفتر فارسی" onChange={(e) => setInfo({ ...info, faOfficeAddress: e.target.value })} />
+                  <Textarea value={info.enOfficeAddress} placeholder="Office address" onChange={(e) => setInfo({ ...info, enOfficeAddress: e.target.value })} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input value={info.faBusinessHoursTitle} placeholder="عنوان ساعات کاری فارسی" onChange={(e) => setInfo({ ...info, faBusinessHoursTitle: e.target.value })} />
+                  <Input value={info.enBusinessHoursTitle} placeholder="Business hours title" onChange={(e) => setInfo({ ...info, enBusinessHoursTitle: e.target.value })} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Textarea value={info.faBusinessHours} placeholder="ساعات کاری فارسی" onChange={(e) => setInfo({ ...info, faBusinessHours: e.target.value })} />
+                  <Textarea value={info.enBusinessHours} placeholder="Business hours" onChange={(e) => setInfo({ ...info, enBusinessHours: e.target.value })} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input value={info.faResponseTimeTitle} placeholder="عنوان زمان پاسخ‌گویی فارسی" onChange={(e) => setInfo({ ...info, faResponseTimeTitle: e.target.value })} />
+                  <Input value={info.enResponseTimeTitle} placeholder="Response time title" onChange={(e) => setInfo({ ...info, enResponseTimeTitle: e.target.value })} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Textarea value={info.faResponseTime} placeholder="زمان پاسخ‌گویی فارسی" onChange={(e) => setInfo({ ...info, faResponseTime: e.target.value })} />
+                  <Textarea value={info.enResponseTime} placeholder="Response time" onChange={(e) => setInfo({ ...info, enResponseTime: e.target.value })} />
+                </div>
+                <Button onClick={saveInfo}>ذخیره</Button>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
 
         <TabsContent value="methods">
           <Button className="mb-4" onClick={() => setEditing({ type: "EMAIL", faLabel: "", enLabel: "", value: "", link: "", colorFrom: "from-blue-500", colorTo: "to-cyan-500", order: data.methods.length })}>

@@ -129,6 +129,15 @@ export interface ContactMethodItem {
   colorTo: string;
 }
 
+export interface ContactPageInfoItem {
+  officeTitle: string;
+  officeAddress: string;
+  businessHoursTitle: string;
+  businessHours: string;
+  responseTimeTitle: string;
+  responseTime: string;
+}
+
 export interface PageMetaItem {
   title: string;
   description: string;

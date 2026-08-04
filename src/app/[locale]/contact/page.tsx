@@ -2,7 +2,11 @@ import ContactInfo from "@/components/ContactInfo";
 import ContactForm from "@/components/ContactForm";
 import ContactHeader from "@/components/ContactHeader";
 import ContactMethod from "@/components/ContactMethod";
-import { getContactPageMeta, getContactMethods } from "@/lib/db/contact";
+import {
+  getContactPageInfo,
+  getContactPageMeta,
+  getContactMethods,
+} from "@/lib/db/contact";
 
 export default async function Contact({
   params,
@@ -12,9 +16,10 @@ export default async function Contact({
   const { locale: rawLocale } = await params;
   const locale = rawLocale as "fa" | "en";
 
-  const [meta, methods] = await Promise.all([
+  const [meta, methods, info] = await Promise.all([
     getContactPageMeta(locale),
     getContactMethods(locale),
+    getContactPageInfo(locale),
   ]);
 
   const contactMethods = methods.map((method) => ({
@@ -43,7 +48,7 @@ export default async function Contact({
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <ContactForm locale={locale} />
-            <ContactInfo locale={locale} />
+            <ContactInfo info={info} />
           </div>
         </div>
       </section>

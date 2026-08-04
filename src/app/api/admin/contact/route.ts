@@ -6,12 +6,13 @@ export async function GET() {
   const { error } = await requireAdmin();
   if (error) return error;
 
-  const [methods, submissions] = await Promise.all([
+  const [methods, submissions, info] = await Promise.all([
     prisma.contactMethod.findMany({ orderBy: { order: "asc" } }),
     prisma.contactSubmission.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.contactPageInfo.findUnique({ where: { id: "default" } }),
   ]);
 
-  return jsonOk({ methods, submissions });
+  return jsonOk({ methods, submissions, info });
 }
 
 export async function PUT(request: Request) {
@@ -26,6 +27,12 @@ export async function PUT(request: Request) {
     } else {
       await prisma.contactMethod.create({ data });
     }
+  } else if (section === "info") {
+    await prisma.contactPageInfo.upsert({
+      where: { id: "default" },
+      update: data,
+      create: { id: "default", ...data },
+    });
   } else if (section === "markRead") {
     await prisma.contactSubmission.update({
       where: { id: data.id },

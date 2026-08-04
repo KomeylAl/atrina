@@ -406,6 +406,23 @@ model ContactMethod {
   order     Int    @default(0)
 }
 
+model ContactPageInfo {
+  id String @id @default("default")
+
+  faOfficeTitle       String @default("آدرس دفتر")
+  enOfficeTitle       String @default("Office Location")
+  faOfficeAddress     String @db.Text
+  enOfficeAddress     String @db.Text
+  faBusinessHoursTitle String @default("ساعات کاری")
+  enBusinessHoursTitle String @default("Business Hours")
+  faBusinessHours     String @db.Text
+  enBusinessHours     String @db.Text
+  faResponseTimeTitle String @default("زمان پاسخ‌گویی")
+  enResponseTimeTitle String @default("Response Time")
+  faResponseTime      String @db.Text
+  enResponseTime      String @db.Text
+}
+
 model ContactSubmission {
   id String @id @default(uuid())
 

@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { localizedField, pickLocalized, type Locale } from "@/lib/locale";
-import type { ContactMethodItem, PageMetaItem } from "@/types/database";
+import type {
+  ContactMethodItem,
+  ContactPageInfoItem,
+  PageMetaItem,
+} from "@/types/database";
 
 export async function getContactPageMeta(locale: Locale): Promise<PageMetaItem> {
   const meta = await prisma.pageMeta.findUnique({ where: { id: "contact" } });
@@ -29,6 +33,27 @@ export async function getContactMethods(
     colorFrom: m.colorFrom,
     colorTo: m.colorTo,
   }));
+}
+
+export async function getContactPageInfo(
+  locale: Locale,
+): Promise<ContactPageInfoItem> {
+  const info = await prisma.contactPageInfo.findUnique({
+    where: { id: "default" },
+  });
+
+  if (!info) {
+    throw new Error("Contact page info is not seeded.");
+  }
+
+  return {
+    officeTitle: localizedField(info, locale, "OfficeTitle"),
+    officeAddress: localizedField(info, locale, "OfficeAddress"),
+    businessHoursTitle: localizedField(info, locale, "BusinessHoursTitle"),
+    businessHours: localizedField(info, locale, "BusinessHours"),
+    responseTimeTitle: localizedField(info, locale, "ResponseTimeTitle"),
+    responseTime: localizedField(info, locale, "ResponseTime"),
+  };
 }
 
 export async function createContactSubmission(data: {
